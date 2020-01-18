@@ -1,6 +1,6 @@
 """Standard validators."""
 
-from logicap.config import TestConfigurationError
+from dictator.config import ConfigurationError
 
 
 class Validator:
@@ -25,7 +25,7 @@ class ValidateType(Validator):
         def _validate(_value, **kwargs):
             """Perform validation."""
             if not isinstance(_value, self.target_type):
-                raise TestConfigurationError(
+                raise ConfigurationError(
                     f"value must be of type '{self.target_type.__name__}'"
                 )
 
@@ -49,7 +49,7 @@ class ValidateIntRange(Validator):
         def _validate(_value, **kwargs):
             """Perform validation."""
             if _value < self._start or _value > self._end:
-                raise TestConfigurationError(
+                raise ConfigurationError(
                     "value out of [{}, {}] range".format(self._start, self._end)
                 )
             return fn(_value, **kwargs)
@@ -73,7 +73,7 @@ class ValidateChoice(Validator):
             """Perform validation."""
             if _value not in self._choices:
                 choices = ", ".join(self._choices)
-                raise TestConfigurationError(
+                raise ConfigurationError(
                     f"value '{_value}' is not a valid choice, choose from [{choices}]"
                 )
             return fn(_value, **kwargs)
@@ -101,7 +101,7 @@ def validate_integer(fn):
                             _value = _value[2:]
                         _value = int(_value.lstrip("0b"), 2)
                     except ValueError:
-                        raise TestConfigurationError(
+                        raise ConfigurationError(
                             f"cannot convert value to integer: '{_value}'"
                         )
         return fn(_value, **kwargs)
@@ -116,7 +116,7 @@ def validate_positive_integer(fn):
     def _validate(_value, **kwargs):
         """Perform validation."""
         if _value < 0:
-            raise TestConfigurationError("value must be a positive integer")
+            raise ConfigurationError("value must be a positive integer")
         return fn(_value, **kwargs)
 
     return _validate

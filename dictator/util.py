@@ -1,7 +1,7 @@
 """Utilities."""
 
-from logicap.config import validate_config, DeferValidation
-from logicap.validators import (
+from dictator.config import validate_config, DeferValidation
+from dictator.validators import (
     Validator,
     ValidateType,
     ValidateChoice,

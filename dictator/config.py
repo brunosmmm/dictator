@@ -1,7 +1,7 @@
 """Validate test configuration."""
 
 
-class TestConfigurationError(Exception):
+class ConfigurationError(Exception):
     """Test configuration error."""
 
 
@@ -26,7 +26,7 @@ def validate_config(config, required_keys, optional_keys=None):
 
     for key in required_keys:
         if key not in config:
-            raise TestConfigurationError(
+            raise ConfigurationError(
                 f"invalid configuration, missing required key '{key}'"
             )
 
@@ -71,7 +71,7 @@ def validate_config(config, required_keys, optional_keys=None):
         except DeferValidation as ex:
             # deferred validation still not done, failure
             readable_depends = ", ".join(ex.depends)
-            raise TestConfigurationError(
+            raise ConfigurationError(
                 f"unresolved dependencies found for key '{key}': '{readable_depends}'"
             )
 
