@@ -11,6 +11,7 @@ from dictator.validators import (
     validate_string,
     validate_list,
     validate_dict,
+    validate_int_percent,
 )
 
 VALIDATE_DECORATORS_NOARGS = (
@@ -19,6 +20,7 @@ VALIDATE_DECORATORS_NOARGS = (
     validate_string,
     validate_list,
     validate_dict,
+    validate_int_percent,
 )
 
 VALIDATE_DECORATORS_ARGS = (ValidateChoice, ValidateIntRange)
