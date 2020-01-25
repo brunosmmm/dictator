@@ -69,6 +69,8 @@ class KeyDependencyMap(Validator):
 
             missing_deps = []
             deps = self._depmap[_value]
+            if isinstance(deps, str):
+                deps = (deps,)
             for dep in deps:
                 if dep not in kwargs:
                     missing_deps.append(dep)
