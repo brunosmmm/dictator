@@ -41,3 +41,26 @@ def test_dependency_map():
 
     with pytest.raises(ConfigurationError):
         validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ, TEST_CONFIG_OPT)
+
+
+def test_dependency_decl_error():
+    """Test dependency declaration errors."""
+
+    with pytest.raises(TypeError):
+
+        @KeyDependency(42, "x")
+        def _validate_decl_err_0(_value, **kwargs):
+            """Cause dependency declaration error."""
+            return _value
+
+    with pytest.raises(TypeError):
+
+        @KeyDependencyMap(someKey=42)
+        def _validate_decl_err_1(_value, **kwargs):
+            return _value
+
+    with pytest.raises(TypeError):
+
+        @KeyDependencyMap(someKey=("a", 42))
+        def _validate_decl_err_2(_value, **kwargs):
+            return _value
