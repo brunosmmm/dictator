@@ -1,4 +1,4 @@
-"""Test sub-confiurations."""
+"""Test sub-configurations."""
 
 import pytest
 from dictator.default import DEFAULT_VALIDATORS
