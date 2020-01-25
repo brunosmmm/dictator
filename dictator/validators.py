@@ -1,6 +1,10 @@
 """Standard validators."""
 
+import re
 import dictator.config
+
+HEX_REGEX = re.compile(r"^(0x)?([0-9A-Fa-f]+)$")
+BIN_REGEX = re.compile(r"^(0b)?([0-1]+)$")
 
 
 class Validator:
@@ -42,7 +46,7 @@ class ValidateType(Validator):
                     type_name = self.target_type.__name__
                 else:
                     type_name = self.target_type
-                raise dictator.config.ConfigurationError(
+                raise dictator.config.ValidationError(
                     f"value must be of type '{type_name}'"
                 )
 
@@ -69,7 +73,7 @@ class ValidateIntRange(Validator):
         def _validate(_value, **kwargs):
             """Perform validation."""
             if _value < self._start or _value > self._end:
-                raise dictator.config.ConfigurationError(
+                raise dictator.config.ValidationError(
                     "value out of [{}, {}] range".format(self._start, self._end)
                 )
             return fn(_value, **kwargs)
@@ -94,7 +98,7 @@ class ValidateChoice(Validator):
             """Perform validation."""
             if _value not in self._choices:
                 choices = ", ".join(self._choices)
-                raise dictator.config.ConfigurationError(
+                raise dictator.config.ValidationError(
                     f"value '{_value}' is not a valid choice, choose from [{choices}]"
                 )
             return fn(_value, **kwargs)
@@ -107,25 +111,23 @@ def validate_integer(fn):
 
     def _validate(_value, **kwargs):
         """Perform validation."""
-        if not isinstance(_value, int):
+        if isinstance(_value, str):
             # try converting
-            try:
-                _value = int(_value)
-            except ValueError:
-                try:
-                    if _value.startswith("0x"):
-                        _value = _value[2:]
-                    _value = int(_value, 16)
-                except ValueError:
-                    try:
-                        if _value.startswith("0b"):
-                            _value = _value[2:]
-                        _value = int(_value.lstrip("0b"), 2)
-                    except ValueError:
-                        raise dictator.config.ConfigurationError(
-                            f"cannot convert value to integer: '{_value}'"
-                        )
-        return fn(_value, **kwargs)
+            h = HEX_REGEX.match(_value)
+            b = BIN_REGEX.match(_value)
+            if h is not None:
+                if h.group(1) is None and b is not None:
+                    # is actually binary
+                    print(f"binary: {_value}")
+                    return fn(int(h.group(2), 2), **kwargs)
+                print(f"hex: {_value}")
+                return fn(int(h.group(2), 16), **kwargs)
+
+            raise dictator.config.ValidationError("cannot validate as integer")
+        elif isinstance(_value, int):
+            return fn(_value, **kwargs)
+
+        raise dictator.config.ValidationError("cannot validate as integer")
 
     return _validate
 
@@ -137,7 +139,7 @@ def validate_positive_integer(fn):
     def _validate(_value, **kwargs):
         """Perform validation."""
         if _value < 0:
-            raise dictator.config.ConfigurationError(
+            raise dictator.config.ValidationError(
                 "value must be a positive integer"
             )
         return fn(_value, **kwargs)
