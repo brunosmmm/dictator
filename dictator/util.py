@@ -59,6 +59,18 @@ class KeyDependencyMap(Validator):
     def __init__(self, **dependency_map):
         """Initialize."""
         super().__init__()
+        for name, dep in dependency_map.items():
+            if not isinstance(name, str):
+                raise TypeError("mapping key must be a string")
+            if not isinstance(dep, (str, tuple, str)):
+                raise TypeError("mapping value must be string, list or tuple")
+
+            if isinstance(dep, (list, tuple)):
+                for dep_name in dep:
+                    if not isinstance(dep_name, str):
+                        raise TypeError(
+                            "in mapping value list: all values must be strings"
+                        )
         self._depmap = dependency_map
 
     def __call__(self, fn):
@@ -89,6 +101,9 @@ class KeyDependency(Validator):
     def __init__(self, *dependencies):
         """Initialize."""
         super().__init__()
+        for dep in dependencies:
+            if not isinstance(dep, str):
+                raise TypeError("dependencies must be strings")
         self._deps = dependencies
 
     def __call__(self, fn):
