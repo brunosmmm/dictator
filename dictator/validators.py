@@ -25,9 +25,11 @@ class ValidateType(Validator):
         def _validate(_value, **kwargs):
             """Perform validation."""
             if not isinstance(_value, self.target_type):
-                raise ConfigurationError(
-                    f"value must be of type '{self.target_type.__name__}'"
-                )
+                if hasattr(self.target_type, "__name__"):
+                    type_name = self.target_type.__name__
+                else:
+                    type_name = self.target_type
+                raise ConfigurationError(f"value must be of type '{type_name}'")
 
             return fn(_value, **kwargs)
 
