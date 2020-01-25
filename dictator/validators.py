@@ -6,12 +6,25 @@ from dictator.config import ConfigurationError
 class Validator:
     """Validator abstract class."""
 
+    _DEFAULT_NAME = None
+
+    @classmethod
+    def get_default_name(cls):
+        """Get default name."""
+        if cls._DEFAULT_NAME is None:
+            raise ValueError("default name unknown")
+
+        return cls._DEFAULT_NAME
+
 
 class ValidateType(Validator):
     """Type validator."""
 
+    _DEFAULT_NAME = "type"
+
     def __init__(self, _type):
         """Initialize."""
+        super().__init__()
         self._type = _type
 
     @property
@@ -39,8 +52,11 @@ class ValidateType(Validator):
 class ValidateIntRange(Validator):
     """Integer range validator."""
 
+    _DEFAULT_NAME = "int_range"
+
     def __init__(self, start, end):
         """Initialize."""
+        super().__init__()
         self._start = start
         self._end = end
 
@@ -62,10 +78,11 @@ class ValidateIntRange(Validator):
 class ValidateChoice(Validator):
     """Validate choice from list."""
 
-    def __init__(self, choices):
+    _DEFAULT_NAME = "choice"
+
+    def __init__(self, *choices):
         """Initialize."""
-        if not isinstance(choices, (tuple, list)):
-            raise TypeError("choices must be a tuple or list")
+        super().__init__()
         self._choices = choices
 
     def __call__(self, fn):
