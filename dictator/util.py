@@ -13,6 +13,33 @@ from dictator.validators import (
     validate_dict,
 )
 
+VALIDATE_DECORATORS_NOARGS = (
+    validate_integer,
+    validate_positive_integer,
+    validate_string,
+    validate_list,
+    validate_dict,
+)
+
+
+def _make_default(decorator):
+    @decorator
+    def _validate_fn(_value, **kwargs):
+        return _value
+
+    return _validate_fn
+
+
+_DEFAULT_NAMES = [
+    "_".join(dec.__name__.split("_")[1:]) for dec in VALIDATE_DECORATORS_NOARGS
+]
+
+
+DEFAULT_VALIDATORS = {
+    name: _make_default(dec)
+    for name, dec in zip(_DEFAULT_NAMES, VALIDATE_DECORATORS_NOARGS)
+}
+
 
 class AutoValidateList(Validator):
     """Automatically validate list elements."""
@@ -34,7 +61,7 @@ class AutoValidateList(Validator):
                     validate_config(entry, self._required, self._optional)
                     for entry in _value
                 ],
-                **kwargs
+                **kwargs,
             )
 
         return _validate
@@ -57,7 +84,7 @@ class AutoValidateDict(Validator):
             """Perform sub-validation."""
             return fn(
                 validate_config(_value, self._required, self._optional),
-                **kwargs
+                **kwargs,
             )
 
         return _validate
