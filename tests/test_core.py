@@ -3,7 +3,7 @@
 import pytest
 
 from dictator.default import DEFAULT_VALIDATORS
-from dictator.config import validate_config, ConfigurationError
+from dictator.config import validate_config, ConfigurationError, ValidationError
 
 
 def test_missing():
@@ -15,19 +15,24 @@ def test_missing():
         validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
 
+def test_novalidate():
+    """Test no validation."""
+    TEST_CONFIG = {"myValue": 42}
+    TEST_CONFIG_REQ = {"myValue": None}
+
+    validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
+
+
 def test_validate_int():
     """Test integer validation."""
-    TEST_CONFIG = {"myValue": 42, "myHexValue": "0x100"}
-    TEST_CONFIG_ERR = {"myValue": "str"}
-    TEST_CONFIG_REQ = {
-        "myValue": int,
-        "myHexValue": int,
-    }
+    TEST_CONFIG = {"myValue": 42, "myHexValue": "0x100", "myBinValue": "0b001"}
+    TEST_CONFIG_ERR = {"myValue": 42, "myHexValue": "bla", "myBinValue": "001"}
+    TEST_CONFIG_REQ = {"myValue": int, "myHexValue": int, "myBinValue": int}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
     # test error
-    with pytest.raises(ConfigurationError):
+    with pytest.raises(ValidationError):
         validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ)
 
 
@@ -48,9 +53,7 @@ def test_validate_str():
     """Test integer validation."""
     TEST_CONFIG = {"myValue": "str"}
     TEST_CONFIG_ERR = {"myValue": 42}
-    TEST_CONFIG_REQ = {
-        "myValue": str,
-    }
+    TEST_CONFIG_REQ = {"myValue": str}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
