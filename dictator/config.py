@@ -15,6 +15,14 @@ class ConfigurationError(Exception):
     """Generic configuration error."""
 
 
+class MissingRequiredKeyError(ConfigurationError):
+    """Missing required key error."""
+
+
+class ValidationError(ConfigurationError):
+    """Validation error."""
+
+
 class DeferValidation(Exception):
     """Defer key validation."""
 
@@ -57,7 +65,7 @@ def validate_config(
 
     for key in required_keys:
         if key not in config:
-            raise ConfigurationError(
+            raise MissingRequiredKeyError(
                 f"invalid configuration, missing required key '{key}'"
             )
 
