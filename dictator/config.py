@@ -1,5 +1,7 @@
 """Validate test configuration."""
 
+import dictator.default
+
 VERBOSITY = {"error": 3, "warning": 2, "info": 1, "debug": 0}
 VERBOSITY_HEADERS = {
     "error": "ERROR",
@@ -39,6 +41,16 @@ def _default_logger(msg, severity, verbosity):
                 msg,
             )
         )
+
+
+def _get_default_validator(by_type):
+    if by_type in dictator.default.DEFAULT_VALIDATOR_BY_TYPE:
+        def_val = dictator.default.DEFAULT_VALIDATOR_BY_TYPE[by_type]
+        validate_fn = dictator.default.DEFAULT_VALIDATORS[def_val]
+    else:
+        raise RuntimeError("no default validator available for type")
+
+    return validate_fn
 
 
 def validate_config(
@@ -82,8 +94,12 @@ def validate_config(
             # no validation
             transformed_config[key] = value
         else:
+            if isinstance(key_loc[key], type):
+                validate_fn = _get_default_validator(key_loc[key])
+            else:
+                validate_fn = key_loc[key]
             try:
-                new_value = key_loc[key](
+                new_value = validate_fn(
                     value, _validator_args=vargs, **transformed_config
                 )
                 if new_value is None:
@@ -100,6 +116,10 @@ def validate_config(
         else:
             key_loc = optional_keys
         try:
+            if isinstance(key_loc[key], type):
+                validate_fn = _get_default_validator(key_loc[key])
+            else:
+                validate_fn = key_loc[key]
             transform = key_loc[key](
                 config[key], _validator_args=vargs, **transformed_config
             )

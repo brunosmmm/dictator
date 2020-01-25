@@ -2,7 +2,7 @@
 
 import pytest
 
-from dictator.util import DEFAULT_VALIDATORS, DEFAULT_VALIDATOR_BUILDERS
+from dictator.default import DEFAULT_VALIDATORS, DEFAULT_VALIDATOR_BUILDERS
 from dictator.config import validate_config, ConfigurationError
 
 
@@ -20,8 +20,8 @@ def test_validate_int():
     TEST_CONFIG = {"myValue": 42, "myHexValue": "0x100"}
     TEST_CONFIG_ERR = {"myValue": "str"}
     TEST_CONFIG_REQ = {
-        "myValue": DEFAULT_VALIDATORS["integer"],
-        "myHexValue": DEFAULT_VALIDATORS["integer"],
+        "myValue": int,
+        "myHexValue": int,
     }
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
@@ -49,7 +49,7 @@ def test_validate_str():
     TEST_CONFIG = {"myValue": "str"}
     TEST_CONFIG_ERR = {"myValue": 42}
     TEST_CONFIG_REQ = {
-        "myValue": DEFAULT_VALIDATORS["string"],
+        "myValue": str,
     }
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
@@ -63,7 +63,7 @@ def test_validate_list():
     """Validate a list."""
     TEST_CONFIG = {"myList": [1, 2, 3]}
     TEST_CONFIG_ERR = {"myList": "other"}
-    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS["list"]}
+    TEST_CONFIG_REQ = {"myList": list}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
@@ -75,7 +75,7 @@ def test_validate_dict():
     """Validate a list."""
     TEST_CONFIG = {"myList": {0: "some"}}
     TEST_CONFIG_ERR = {"myList": "other"}
-    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS["dict"]}
+    TEST_CONFIG_REQ = {"myList": dict}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
