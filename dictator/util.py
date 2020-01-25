@@ -145,34 +145,29 @@ class KeyDependency(Validator):
         return _validate
 
 
-@validate_integer
 def default_validate_int(_value, **kwargs):
     """Default integer validator."""
-    return _value
+    return DEFAULT_VALIDATORS["integer"]
 
 
-@validate_positive_integer
 def default_validate_pos_int(_value, **kwargs):
     """Default positive integer validator."""
-    return _value
+    return DEFAULT_VALIDATORS["positive_integer"]
 
 
-@validate_string
 def default_validate_str(_value, **kwargs):
     """Default string validator."""
-    return _value
+    return DEFAULT_VALIDATORS["string"]
 
 
-@validate_list
 def default_validate_list(_value, **kwargs):
     """Default list validator."""
-    return _value
+    return DEFAULT_VALIDATORS["list"]
 
 
-@validate_dict
 def default_validate_dict(_value, **kwargs):
     """Default dict validator."""
-    return _value
+    return DEFAULT_VALIDATORS["dict"]
 
 
 def build_validate_choice(*choices):
