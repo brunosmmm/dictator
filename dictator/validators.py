@@ -89,7 +89,7 @@ def validate_integer(fn):
         if not isinstance(_value, int):
             # try converting
             try:
-                value = int(_value)
+                _value = int(_value)
             except ValueError:
                 try:
                     if _value.startswith("0x"):
