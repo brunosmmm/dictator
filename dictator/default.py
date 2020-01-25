@@ -67,9 +67,9 @@ class _DefaultValidators:
     def _make_default_with_args(decorator):
         """Build default validator function builder."""
 
-        def _outer_validate_fn(*args):
-            @decorator(*args)
-            def _validate_fn(_value, **kwargs):
+        def _outer_validate_fn(*args, **kwargs):
+            @decorator(*args, **kwargs)
+            def _validate_fn(_value, **_kwargs):
                 return _value
 
             return _validate_fn
