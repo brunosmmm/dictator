@@ -10,6 +10,12 @@ from dictator.validators import (
     validate_dict,
     validate_int_percent,
 )
+from dictator.util import (
+    KeyDependency,
+    KeyDependencyMap,
+    AutoValidateDict,
+    AutoValidateList,
+)
 
 
 class _DefaultValidators:
@@ -29,7 +35,14 @@ class _DefaultValidators:
         for dec in VALIDATE_DECORATORS_NOARGS
     ]
 
-    VALIDATE_DECORATORS_ARGS = (ValidateChoice, ValidateIntRange)
+    VALIDATE_DECORATORS_ARGS = (
+        ValidateChoice,
+        ValidateIntRange,
+        AutoValidateList,
+        AutoValidateDict,
+        KeyDependency,
+        KeyDependencyMap,
+    )
 
     DEFAULT_VALIDATOR_BY_TYPE = {
         int: "integer",
