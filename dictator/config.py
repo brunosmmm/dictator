@@ -48,7 +48,9 @@ def validate_config(
 ):
     """Validate configuration."""
     if not isinstance(config, dict):
-        raise TypeError("configuration must be a dictionary")
+        raise TypeError(
+            f"configuration must be a dictionary, got: {type(config)}"
+        )
 
     # pass validation config args down
     vargs = {"verbosity": verbosity}
