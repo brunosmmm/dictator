@@ -146,6 +146,17 @@ def validate_list(fn):
     return _validate
 
 
+def validate_dict(fn):
+    """Validate dictionaries."""
+
+    @ValidateType(dict)
+    def _validate(_value, **kwargs):
+        """Perform validation."""
+        return fn(_value, **kwargs)
+
+    return _validate
+
+
 def validate_int_percent(fn):
     """Validate percent value (integer)."""
 

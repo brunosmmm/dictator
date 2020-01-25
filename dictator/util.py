@@ -10,6 +10,7 @@ from dictator.validators import (
     validate_positive_integer,
     validate_string,
     validate_list,
+    validate_dict,
 )
 
 
@@ -138,6 +139,12 @@ def default_validate_str(_value, **kwargs):
 @validate_list
 def default_validate_list(_value, **kwargs):
     """Default list validator."""
+    return _value
+
+
+@validate_dict
+def default_validate_dict(_value, **kwargs):
+    """Default dict validator."""
     return _value
 
 
