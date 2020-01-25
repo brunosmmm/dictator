@@ -7,6 +7,8 @@ from dictator.validators import Validator, ValidateType
 class AutoValidateList(Validator):
     """Automatically validate list elements."""
 
+    _DEFAULT_NAME = "sub_list"
+
     def __init__(self, required_keys, optional_keys=None):
         """Initialize."""
         super().__init__()
@@ -33,6 +35,8 @@ class AutoValidateList(Validator):
 class AutoValidateDict(Validator):
     """Automatically validate dict elements."""
 
+    _DEFAULT_NAME = "sub_dict"
+
     def __init__(self, required_keys, optional_keys=None):
         """Initialize."""
         super().__init__()
@@ -55,6 +59,8 @@ class AutoValidateDict(Validator):
 
 class KeyDependencyMap(Validator):
     """Check for dependencies."""
+
+    _DEFAULT_NAME = "dependency_map"
 
     def __init__(self, **dependency_map):
         """Initialize."""
@@ -95,6 +101,8 @@ class KeyDependencyMap(Validator):
 
 class KeyDependency(Validator):
     """Check for dependencies."""
+
+    _DEFAULT_NAME = "dependency"
 
     def __init__(self, *dependencies):
         """Initialize."""
