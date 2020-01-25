@@ -1,2 +1,1 @@
-"""JSON-like validator."""
-
+"""DICTionAry configuraTion vAlidaTOR."""
