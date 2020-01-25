@@ -12,6 +12,10 @@ class AutoValidateList(Validator):
     def __init__(self, required_keys, optional_keys=None):
         """Initialize."""
         super().__init__()
+        if not isinstance(required_keys, dict):
+            raise TypeError("required_keys must be a dictionary")
+        if optional_keys is not None and not isinstance(optional_keys, dict):
+            raise TypeError("optional_keys must be a dictionary")
         self._required = required_keys
         self._optional = optional_keys
 
@@ -40,6 +44,10 @@ class AutoValidateDict(Validator):
     def __init__(self, required_keys, optional_keys=None):
         """Initialize."""
         super().__init__()
+        if not isinstance(required_keys, dict):
+            raise TypeError("required_keys must be a dictionary")
+        if optional_keys is not None and not isinstance(optional_keys, dict):
+            raise TypeError("optional_keys must be a dictionary")
         self._required = required_keys
         self._optional = optional_keys
 
