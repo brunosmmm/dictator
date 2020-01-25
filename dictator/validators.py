@@ -1,6 +1,6 @@
 """Standard validators."""
 
-from dictator.config import ConfigurationError
+import dictator.config
 
 
 class Validator:
@@ -42,7 +42,9 @@ class ValidateType(Validator):
                     type_name = self.target_type.__name__
                 else:
                     type_name = self.target_type
-                raise ConfigurationError(f"value must be of type '{type_name}'")
+                raise dictator.config.ConfigurationError(
+                    f"value must be of type '{type_name}'"
+                )
 
             return fn(_value, **kwargs)
 
@@ -67,7 +69,7 @@ class ValidateIntRange(Validator):
         def _validate(_value, **kwargs):
             """Perform validation."""
             if _value < self._start or _value > self._end:
-                raise ConfigurationError(
+                raise dictator.config.ConfigurationError(
                     "value out of [{}, {}] range".format(self._start, self._end)
                 )
             return fn(_value, **kwargs)
@@ -92,7 +94,7 @@ class ValidateChoice(Validator):
             """Perform validation."""
             if _value not in self._choices:
                 choices = ", ".join(self._choices)
-                raise ConfigurationError(
+                raise dictator.config.ConfigurationError(
                     f"value '{_value}' is not a valid choice, choose from [{choices}]"
                 )
             return fn(_value, **kwargs)
@@ -120,7 +122,7 @@ def validate_integer(fn):
                             _value = _value[2:]
                         _value = int(_value.lstrip("0b"), 2)
                     except ValueError:
-                        raise ConfigurationError(
+                        raise dictator.config.ConfigurationError(
                             f"cannot convert value to integer: '{_value}'"
                         )
         return fn(_value, **kwargs)
@@ -135,7 +137,9 @@ def validate_positive_integer(fn):
     def _validate(_value, **kwargs):
         """Perform validation."""
         if _value < 0:
-            raise ConfigurationError("value must be a positive integer")
+            raise dictator.config.ConfigurationError(
+                "value must be a positive integer"
+            )
         return fn(_value, **kwargs)
 
     return _validate
