@@ -60,8 +60,6 @@ class KeyDependencyMap(Validator):
         """Initialize."""
         super().__init__()
         for name, dep in dependency_map.items():
-            if not isinstance(name, str):
-                raise TypeError("mapping key must be a string")
             if not isinstance(dep, (str, tuple, str)):
                 raise TypeError("mapping value must be string, list or tuple")
 
