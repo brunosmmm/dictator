@@ -2,7 +2,7 @@
 
 import pytest
 
-from dictator.default import DEFAULT_VALIDATORS, DEFAULT_VALIDATOR_BUILDERS
+from dictator.default import DEFAULT_VALIDATORS
 from dictator.config import validate_config, ConfigurationError
 
 
@@ -35,7 +35,7 @@ def test_validate_pos_int():
     """Validate positive integers."""
     TEST_CONFIG = {"myValue": 42}
     TEST_CONFIG_ERR = {"myValue": -42}
-    TEST_CONFIG_REQ = {"myValue": DEFAULT_VALIDATORS["positive_integer"]}
+    TEST_CONFIG_REQ = {"myValue": DEFAULT_VALIDATORS.positive_integer}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
@@ -87,9 +87,7 @@ def test_validate_choice():
     """Validate a list."""
     TEST_CONFIG = {"myList": "bla"}
     TEST_CONFIG_ERR = {"myList": "other"}
-    TEST_CONFIG_REQ = {
-        "myList": DEFAULT_VALIDATOR_BUILDERS["choice"]("bla", "boo")
-    }
+    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.choice("bla", "boo")}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
@@ -101,9 +99,7 @@ def test_validate_intrange():
     """Validate a list."""
     TEST_CONFIG = {"myList": 42}
     TEST_CONFIG_ERR = {"myList": 0}
-    TEST_CONFIG_REQ = {
-        "myList": DEFAULT_VALIDATOR_BUILDERS["int_range"](40, 46)
-    }
+    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.int_range(40, 46)}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 
@@ -115,7 +111,7 @@ def test_validate_intpercent():
     """Validate a list."""
     TEST_CONFIG = {"myList": 42}
     TEST_CONFIG_ERR = {"myList": 200}
-    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS["int_percent"]}
+    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.int_percent}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 

@@ -12,7 +12,7 @@ VERBOSITY_HEADERS = {
 
 
 class ConfigurationError(Exception):
-    """Test configuration error."""
+    """Generic configuration error."""
 
 
 class DeferValidation(Exception):
@@ -41,16 +41,6 @@ def _default_logger(msg, severity, verbosity):
                 msg,
             )
         )
-
-
-def _get_default_validator(by_type):
-    if by_type in dictator.default.DEFAULT_VALIDATOR_BY_TYPE:
-        def_val = dictator.default.DEFAULT_VALIDATOR_BY_TYPE[by_type]
-        validate_fn = dictator.default.DEFAULT_VALIDATORS[def_val]
-    else:
-        raise RuntimeError("no default validator available for type")
-
-    return validate_fn
 
 
 def validate_config(
@@ -95,7 +85,9 @@ def validate_config(
             transformed_config[key] = value
         else:
             if isinstance(key_loc[key], type):
-                validate_fn = _get_default_validator(key_loc[key])
+                validate_fn = dictator.default.DEFAULT_VALIDATORS.get_by_type(
+                    key_loc[key]
+                )
             else:
                 validate_fn = key_loc[key]
             try:
@@ -117,7 +109,9 @@ def validate_config(
             key_loc = optional_keys
         try:
             if isinstance(key_loc[key], type):
-                validate_fn = _get_default_validator(key_loc[key])
+                validate_fn = dictator.default.DEFAULT_VALIDATORS.get_by_type(
+                    key_loc[key]
+                )
             else:
                 validate_fn = key_loc[key]
             transform = key_loc[key](
