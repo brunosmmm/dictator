@@ -2,8 +2,9 @@
 
 import pytest
 
-from dictator.default import DEFAULT_VALIDATORS
-from dictator.config import validate_config, ConfigurationError, ValidationError
+from dictator.validators.default import DEFAULT_VALIDATORS
+from dictator.config import validate_config
+from dictator.errors import ConfigurationError, ValidationError
 
 
 def test_missing():
@@ -114,7 +115,7 @@ def test_validate_intpercent():
     """Validate a list."""
     TEST_CONFIG = {"myList": 42}
     TEST_CONFIG_ERR = {"myList": 200}
-    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.int_percent}
+    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.percent_integer}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 

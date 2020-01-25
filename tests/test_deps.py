@@ -1,9 +1,10 @@
 """Test dependencies."""
 
 import pytest
-from dictator.config import validate_config, ConfigurationError
-from dictator.default import DEFAULT_VALIDATORS
-from dictator.util import KeyDependency, KeyDependencyMap
+from dictator.config import validate_config
+from dictator.errors import ConfigurationError
+from dictator.validators.default import DEFAULT_VALIDATORS
+from dictator.validators.dependency import KeyDependency, KeyDependencyMap
 
 
 def test_dependency():

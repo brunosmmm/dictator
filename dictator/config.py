@@ -1,6 +1,8 @@
 """Validate test configuration."""
 
-import dictator.default
+import dictator.validators.default
+from dictator.errors import MissingRequiredKeyError, MissingDependencyError
+from dictator.validators.dependency import DeferValidation
 
 VERBOSITY = {"error": 3, "warning": 2, "info": 1, "debug": 0}
 VERBOSITY_HEADERS = {
@@ -9,32 +11,6 @@ VERBOSITY_HEADERS = {
     "info": "",
     "debug": "DEBUG",
 }
-
-
-class ConfigurationError(Exception):
-    """Generic configuration error."""
-
-
-class MissingRequiredKeyError(ConfigurationError):
-    """Missing required key error."""
-
-
-class ValidationError(ConfigurationError):
-    """Validation error."""
-
-
-class DeferValidation(Exception):
-    """Defer key validation."""
-
-    def __init__(self, *depends):
-        """Initialize."""
-        self._depends = depends
-        super().__init__("")
-
-    @property
-    def depends(self):
-        """Get key dependencies."""
-        return self._depends
 
 
 def _default_logger(msg, severity, verbosity):
@@ -95,7 +71,7 @@ def validate_config(
             transformed_config[key] = value
         else:
             if isinstance(key_loc[key], type):
-                validate_fn = dictator.default.DEFAULT_VALIDATORS.get_by_type(
+                validate_fn = dictator.validators.default.DEFAULT_VALIDATORS.get_by_type(
                     key_loc[key]
                 )
             else:
@@ -119,7 +95,7 @@ def validate_config(
             key_loc = optional_keys
         try:
             if isinstance(key_loc[key], type):
-                validate_fn = dictator.default.DEFAULT_VALIDATORS.get_by_type(
+                validate_fn = dictator.validators.default.DEFAULT_VALIDATORS.get_by_type(
                     key_loc[key]
                 )
             else:
@@ -130,7 +106,7 @@ def validate_config(
         except DeferValidation as ex:
             # deferred validation still not done, failure
             readable_depends = ", ".join(ex.depends)
-            raise ConfigurationError(
+            raise MissingDependencyError(
                 f"unresolved dependencies found for key '{key}': '{readable_depends}'"
             )
 

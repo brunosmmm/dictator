@@ -1,20 +1,24 @@
 """Default Validators."""
 
-from dictator.validators import (
-    ValidateChoice,
-    ValidateIntRange,
+from dictator.validators.base import (
     validate_integer,
-    validate_positive_integer,
     validate_string,
     validate_list,
     validate_dict,
-    validate_int_percent,
 )
-from dictator.util import (
+
+from dictator.validators.integer import (
+    validate_percent_integer,
+    validate_positive_integer,
+    ValidateIntRange,
+)
+
+from dictator.validators.lists import ValidateChoice, SubListValidator
+from dictator.validators.maps import SubDictValidator
+
+from dictator.validators.dependency import (
     KeyDependency,
     KeyDependencyMap,
-    AutoValidateDict,
-    AutoValidateList,
 )
 
 
@@ -27,7 +31,7 @@ class _DefaultValidators:
         validate_string,
         validate_list,
         validate_dict,
-        validate_int_percent,
+        validate_percent_integer,
     )
 
     DEFAULT_NAMES = [
@@ -38,8 +42,8 @@ class _DefaultValidators:
     VALIDATE_DECORATORS_ARGS = (
         ValidateChoice,
         ValidateIntRange,
-        AutoValidateList,
-        AutoValidateDict,
+        SubListValidator,
+        SubDictValidator,
         KeyDependency,
         KeyDependencyMap,
     )

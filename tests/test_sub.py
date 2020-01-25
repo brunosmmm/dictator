@@ -1,8 +1,9 @@
 """Test sub-configurations."""
 
 import pytest
-from dictator.default import DEFAULT_VALIDATORS
-from dictator.config import validate_config, ConfigurationError
+from dictator.validators.default import DEFAULT_VALIDATORS
+from dictator.config import validate_config
+from dictator.errors import ConfigurationError
 
 
 def test_sub_list():
