@@ -52,9 +52,7 @@ def validate_integer(fn):
             if h is not None:
                 if h.group(1) is None and b is not None:
                     # is actually binary
-                    print(f"binary: {_value}")
                     return fn(int(h.group(2), 2), **kwargs)
-                print(f"hex: {_value}")
                 return fn(int(h.group(2), 16), **kwargs)
 
             raise ValidationError("cannot validate as integer")
