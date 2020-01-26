@@ -1,6 +1,6 @@
 """Validate test configuration."""
 
-import dictator.validators.default
+import dictator.validators.default as defaults
 from dictator.errors import (
     MissingRequiredKeyError,
     MissingDependencyError,
@@ -89,7 +89,7 @@ def validate_config(
             transformed_config[key] = value
         else:
             if isinstance(key_loc[key], type):
-                validate_fn = dictator.validators.default.DEFAULT_VALIDATORS.get_by_type(
+                validate_fn = defaults.DEFAULT_VALIDATORS.get_by_type(
                     key_loc[key]
                 )
             else:
@@ -113,7 +113,7 @@ def validate_config(
             key_loc = optional_keys
         try:
             if isinstance(key_loc[key], type):
-                validate_fn = dictator.validators.default.DEFAULT_VALIDATORS.get_by_type(
+                validate_fn = defaults.DEFAULT_VALIDATORS.get_by_type(
                     key_loc[key]
                 )
             else:
@@ -125,7 +125,8 @@ def validate_config(
             # deferred validation still not done, failure
             readable_depends = ", ".join(ex.depends)
             raise MissingDependencyError(
-                f"unresolved dependencies found for key '{key}': '{readable_depends}'"
+                f"unresolved dependencies found for key '{key}':"
+                f"'{readable_depends}'"
             )
 
         if transform is not None:
