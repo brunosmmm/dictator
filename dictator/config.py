@@ -106,12 +106,11 @@ def validate_config(
             transformed_config[key] = value
         else:
             # try default validator
-            if isinstance(key_loc[key], type):
-                validate_fn = defaults.DEFAULT_VALIDATORS.get_by_type(
-                    key_loc[key]
-                )
-            else:
-                validate_fn = key_loc[key]
+            validate_fn = (
+                defaults.DEFAULT_VALIDATORS.get_by_type(key_loc[key])
+                if isinstance(key_loc[key], type)
+                else key_loc[key]
+            )
             try:
                 new_value = validate_fn(
                     value, _validator_args=vargs, **transformed_config
@@ -126,12 +125,11 @@ def validate_config(
     for key, depends in deferred_keys.items():
         key_loc = required_keys if key in required_keys else optional_keys
         try:
-            if isinstance(key_loc[key], type):
-                validate_fn = defaults.DEFAULT_VALIDATORS.get_by_type(
-                    key_loc[key]
-                )
-            else:
-                validate_fn = key_loc[key]
+            validate_fn = (
+                defaults.DEFAULT_VALIDATORS.get_by_type(key_loc[key])
+                if isinstance(key_loc[key], type)
+                else key_loc[key]
+            )
             transform = key_loc[key](
                 config[key], _validator_args=vargs, **transformed_config
             )
