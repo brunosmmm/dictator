@@ -99,11 +99,7 @@ def validate_config(
                 raise UnknownKeyError(f"unknown key: {key}")
             continue
 
-        if key in required_keys:
-            key_loc = required_keys
-        elif key in optional_keys:
-            key_loc = optional_keys
-
+        key_loc = required_keys if key in required_keys else optional_keys
         # call validate
         if key_loc[key] is None:
             # no validation
@@ -128,10 +124,7 @@ def validate_config(
 
     # resolve dependencies
     for key, depends in deferred_keys.items():
-        if key in required_keys:
-            key_loc = required_keys
-        else:
-            key_loc = optional_keys
+        key_loc = required_keys if key in required_keys else optional_keys
         try:
             if isinstance(key_loc[key], type):
                 validate_fn = defaults.DEFAULT_VALIDATORS.get_by_type(
