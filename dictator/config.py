@@ -31,35 +31,44 @@ def _default_logger(msg, severity, verbosity):
         )
 
 
+def _config_pre_checklist(fn):
+    """Check configuration types."""
+
+    def _check(config, required_keys, optional_keys=None, *args, **kwargs):
+        if not isinstance(config, dict):
+            raise TypeError(
+                f"configuration must be a dictionary, got: {type(config)}"
+            )
+        if not isinstance(required_keys, dict):
+            raise TypeError("required_keys must be a dictionary")
+
+        if optional_keys is not None:
+            if not isinstance(optional_keys, dict):
+                raise TypeError("optional_keys must be a dictionary")
+
+            for key in optional_keys:
+                if not isinstance(key, str):
+                    raise KeyDeclarationError("keys must be string values")
+
+        for key in required_keys:
+            if not isinstance(key, str):
+                raise KeyDeclarationError("keys must be string values")
+            if key not in config:
+                raise MissingRequiredKeyError(
+                    f"invalid configuration, missing required key '{key}'"
+                )
+        return fn(config, required_keys, optional_keys, *args, **kwargs)
+
+    return _check
+
+
+@_config_pre_checklist
 def validate_config(
     config, required_keys, optional_keys=None, verbosity="error", log_fn=None
 ):
     """Validate configuration."""
-    if not isinstance(config, dict):
-        raise TypeError(
-            f"configuration must be a dictionary, got: {type(config)}"
-        )
-    if not isinstance(required_keys, dict):
-        raise TypeError("required_keys must be a dictionary")
-
     # pass validation config args down
     vargs = {"verbosity": verbosity}
-
-    for key in required_keys:
-        if not isinstance(key, str):
-            raise KeyDeclarationError("keys must be string values")
-        if key not in config:
-            raise MissingRequiredKeyError(
-                f"invalid configuration, missing required key '{key}'"
-            )
-
-    if optional_keys is not None:
-        if not isinstance(optional_keys, dict):
-            raise TypeError("optional_keys must be a dictionary")
-
-        for key in optional_keys:
-            if not isinstance(key, str):
-                raise KeyDeclarationError("keys must be string values")
 
     transformed_config = {}
     deferred_keys = {}
