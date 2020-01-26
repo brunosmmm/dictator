@@ -115,3 +115,14 @@ def validate_float(fn):
         return fn(_value, **kwargs)
 
     return _validate
+
+
+def validate_null(fn):
+    """Validate null value."""
+
+    def _validate(_value, **kwargs):
+        if _value is not None:
+            raise ValidationError("value is not null")
+        return fn(_value, **kwargs)
+
+    return _validate

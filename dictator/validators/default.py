@@ -7,6 +7,7 @@ from dictator.validators.base import (
     validate_dict,
     validate_boolean,
     validate_float,
+    validate_null,
 )
 
 from dictator.validators.integer import (
@@ -36,6 +37,7 @@ class _DefaultValidators:
         validate_percent_integer,
         validate_boolean,
         validate_float,
+        validate_null,
     )
 
     DEFAULT_NAMES = [
