@@ -50,6 +50,9 @@ def _config_pre_checklist(fn):
             for key in optional_keys:
                 if not isinstance(key, str):
                     raise KeyDeclarationError("keys must be string values")
+                if key in required_keys:
+                    # warning, required AND optional
+                    pass
 
         for key in required_keys:
             if not isinstance(key, str):
