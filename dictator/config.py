@@ -79,6 +79,11 @@ def validate_config(
     # pass validation config args down
     vargs = {"verbosity": verbosity}
 
+    if log_fn is not None:
+        _log = log_fn
+    else:
+        _log = _default_logger
+
     transformed_config = {}
     deferred_keys = {}
     for key, value in config.items():
@@ -89,10 +94,6 @@ def validate_config(
             or optional_keys is None
         ):
             # warning, unknown key
-            if log_fn is not None:
-                _log = log_fn
-            else:
-                _log = _default_logger
             _log(f"unknown key: '{key}'", "warning", verbosity)
             if allow_unknown is False:
                 raise UnknownKeyError(f"unknown key: {key}")
