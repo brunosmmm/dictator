@@ -121,3 +121,15 @@ def test_validate_intpercent():
 
     with pytest.raises(ConfigurationError):
         validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ)
+
+
+def test_validate_bool():
+    """Validate a list."""
+    TEST_CONFIG = {"myList": True}
+    TEST_CONFIG_ERR = {"myList": "other"}
+    TEST_CONFIG_REQ = {"myList": bool}
+
+    validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
+
+    with pytest.raises(ConfigurationError):
+        validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ)

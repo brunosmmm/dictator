@@ -95,3 +95,13 @@ def validate_dict(fn):
         return fn(_value, **kwargs)
 
     return _validate
+
+
+def validate_boolean(fn):
+    """Validate boolean value."""
+
+    @ValidateType(bool)
+    def _validate(_value, **kwargs):
+        return fn(_value, **kwargs)
+
+    return _validate

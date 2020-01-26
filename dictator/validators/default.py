@@ -5,6 +5,7 @@ from dictator.validators.base import (
     validate_string,
     validate_list,
     validate_dict,
+    validate_boolean,
 )
 
 from dictator.validators.integer import (
@@ -32,6 +33,7 @@ class _DefaultValidators:
         validate_list,
         validate_dict,
         validate_percent_integer,
+        validate_boolean,
     )
 
     DEFAULT_NAMES = [
@@ -53,6 +55,7 @@ class _DefaultValidators:
         str: "string",
         list: "list",
         dict: "dict",
+        bool: "boolean",
     }
 
     def __init__(self):
