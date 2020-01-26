@@ -133,3 +133,15 @@ def test_validate_bool():
 
     with pytest.raises(ConfigurationError):
         validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ)
+
+
+def test_validate_float():
+    """Validate a list."""
+    TEST_CONFIG = {"myList": 0.1234}
+    TEST_CONFIG_ERR = {"myList": "other"}
+    TEST_CONFIG_REQ = {"myList": float}
+
+    validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
+
+    with pytest.raises(ConfigurationError):
+        validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ)

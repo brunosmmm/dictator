@@ -105,3 +105,13 @@ def validate_boolean(fn):
         return fn(_value, **kwargs)
 
     return _validate
+
+
+def validate_float(fn):
+    """Validate floating point value."""
+
+    @ValidateType(float)
+    def _validate(_value, **kwargs):
+        return fn(_value, **kwargs)
+
+    return _validate
