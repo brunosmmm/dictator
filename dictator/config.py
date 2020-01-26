@@ -76,6 +76,14 @@ def validate_config(
     allow_unknown=True,
 ):
     """Validate configuration."""
+
+    def _get_validate_fn(entry):
+        return (
+            defaults.DEFAULT_VALIDATORS.get_by_type(entry)
+            if isinstance(entry, type)
+            else entry
+        )
+
     # pass validation config args down
     vargs = {"verbosity": verbosity}
 
@@ -106,13 +114,8 @@ def validate_config(
             transformed_config[key] = value
         else:
             # try default validator
-            validate_fn = (
-                defaults.DEFAULT_VALIDATORS.get_by_type(key_loc[key])
-                if isinstance(key_loc[key], type)
-                else key_loc[key]
-            )
             try:
-                new_value = validate_fn(
+                new_value = _get_validate_fn(key_loc[key])(
                     value, _validator_args=vargs, **transformed_config
                 )
                 transformed_config[key] = (
@@ -125,12 +128,7 @@ def validate_config(
     for key, depends in deferred_keys.items():
         key_loc = required_keys if key in required_keys else optional_keys
         try:
-            validate_fn = (
-                defaults.DEFAULT_VALIDATORS.get_by_type(key_loc[key])
-                if isinstance(key_loc[key], type)
-                else key_loc[key]
-            )
-            transform = key_loc[key](
+            transform = _get_validate_fn(key_loc[key])(
                 config[key], _validator_args=vargs, **transformed_config
             )
         except DeferValidation as ex:
