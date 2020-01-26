@@ -19,3 +19,7 @@ class ValidationError(ConfigurationError):
 
 class KeyDeclarationError(ConfigurationError):
     """Key declaration error."""
+
+
+class UnknownKeyError(ConfigurationError):
+    """Unknown key error."""

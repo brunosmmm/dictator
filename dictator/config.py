@@ -5,6 +5,7 @@ from dictator.errors import (
     MissingRequiredKeyError,
     MissingDependencyError,
     KeyDeclarationError,
+    UnknownKeyError,
 )
 from dictator.validators.dependency import DeferValidation
 
@@ -64,7 +65,12 @@ def _config_pre_checklist(fn):
 
 @_config_pre_checklist
 def validate_config(
-    config, required_keys, optional_keys=None, verbosity="error", log_fn=None
+    config,
+    required_keys,
+    optional_keys=None,
+    verbosity="error",
+    log_fn=None,
+    allow_unknown=True,
 ):
     """Validate configuration."""
     # pass validation config args down
@@ -85,6 +91,8 @@ def validate_config(
             else:
                 _log = _default_logger
             _log(f"unknown key: '{key}'", "warning", verbosity)
+            if allow_unknown is False:
+                raise UnknownKeyError(f"unknown key: {key}")
             continue
 
         if key in required_keys:
