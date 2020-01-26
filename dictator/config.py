@@ -105,6 +105,7 @@ def validate_config(
             # no validation
             transformed_config[key] = value
         else:
+            # try default validator
             if isinstance(key_loc[key], type):
                 validate_fn = defaults.DEFAULT_VALIDATORS.get_by_type(
                     key_loc[key]
@@ -115,10 +116,9 @@ def validate_config(
                 new_value = validate_fn(
                     value, _validator_args=vargs, **transformed_config
                 )
-                if new_value is None:
-                    transformed_config[key] = value
-                else:
-                    transformed_config[key] = new_value
+                transformed_config[key] = (
+                    value if new_value is None else new_value
+                )
             except DeferValidation as defer:
                 deferred_keys[key] = defer.depends
 
@@ -143,9 +143,8 @@ def validate_config(
                 f"'{readable_depends}'"
             )
 
-        if transform is not None:
-            transformed_config[key] = transform
-        else:
-            transformed_config[key] = config[key]
+        transformed_config[key] = (
+            transform if transform is not None else config[key]
+        )
 
     return transformed_config
