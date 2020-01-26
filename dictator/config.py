@@ -1,7 +1,11 @@
 """Validate test configuration."""
 
 import dictator.validators.default
-from dictator.errors import MissingRequiredKeyError, MissingDependencyError
+from dictator.errors import (
+    MissingRequiredKeyError,
+    MissingDependencyError,
+    KeyDeclarationError,
+)
 from dictator.validators.dependency import DeferValidation
 
 VERBOSITY = {"error": 3, "warning": 2, "info": 1, "debug": 0}
@@ -35,19 +39,33 @@ def validate_config(
         raise TypeError(
             f"configuration must be a dictionary, got: {type(config)}"
         )
+    if not isinstance(required_keys, dict):
+        raise TypeError("required_keys must be a dictionary")
 
     # pass validation config args down
     vargs = {"verbosity": verbosity}
 
     for key in required_keys:
+        if not isinstance(key, str):
+            raise KeyDeclarationError("keys must be string values")
         if key not in config:
             raise MissingRequiredKeyError(
                 f"invalid configuration, missing required key '{key}'"
             )
 
+    if optional_keys is not None:
+        if not isinstance(optional_keys, dict):
+            raise TypeError("optional_keys must be a dictionary")
+
+        for key in optional_keys:
+            if not isinstance(key, str):
+                raise KeyDeclarationError("keys must be string values")
+
     transformed_config = {}
     deferred_keys = {}
     for key, value in config.items():
+        if not isinstance(key, str):
+            raise TypeError("keys must be string values")
         if key not in required_keys and (
             (optional_keys is not None and key not in optional_keys)
             or optional_keys is None

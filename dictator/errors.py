@@ -15,3 +15,7 @@ class MissingDependencyError(ConfigurationError):
 
 class ValidationError(ConfigurationError):
     """Validation error."""
+
+
+class KeyDeclarationError(ConfigurationError):
+    """Key declaration error."""
