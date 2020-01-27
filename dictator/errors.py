@@ -23,3 +23,7 @@ class KeyDeclarationError(ConfigurationError):
 
 class UnknownKeyError(ConfigurationError):
     """Unknown key error."""
+
+
+class DefaultValidatorError(ConfigurationError):
+    """Default validator error."""
