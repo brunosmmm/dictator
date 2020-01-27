@@ -10,7 +10,7 @@ class ValidateIntRange(Validator):
 
     _DEFAULT_NAME = "int_range"
 
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         """Initialize."""
         super().__init__()
         self._start = start

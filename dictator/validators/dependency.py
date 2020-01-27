@@ -64,7 +64,7 @@ class KeyDependency(Validator):
 
     _DEFAULT_NAME = "dependency"
 
-    def __init__(self, *dependencies):
+    def __init__(self, *dependencies, **kwargs):
         """Initialize."""
         super().__init__()
         for dep in dependencies:

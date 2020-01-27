@@ -11,7 +11,7 @@ class ValidateChoice(Validator):
 
     _DEFAULT_NAME = "choice"
 
-    def __init__(self, *choices):
+    def __init__(self, *choices, **kwargs):
         """Initialize."""
         super().__init__()
         self._choices = choices
@@ -36,7 +36,7 @@ class SubListValidator(Validator):
 
     _DEFAULT_NAME = "sub_list"
 
-    def __init__(self, required_keys, optional_keys=None):
+    def __init__(self, required_keys, optional_keys=None, **kwargs):
         """Initialize."""
         super().__init__()
         if not isinstance(required_keys, dict):
