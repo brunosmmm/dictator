@@ -86,7 +86,9 @@ class HomogeneousValidator(Validator):
         @ValidateType((tuple, list))
         def _validate(_value, **kwargs):
             validate_fn = (
-                dictator.default.DEFAULT_VALIDATORS.get_by_type(self._validator)
+                dictator.validators.default.DEFAULT_VALIDATORS.get_by_type(
+                    self._validator
+                )
                 if isinstance(self._validator, type)
                 else self._validator
             )
