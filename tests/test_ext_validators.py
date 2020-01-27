@@ -21,7 +21,7 @@ def test_validate_pos_int():
 
 
 def test_validate_choice():
-    """Validate a list."""
+    """Validate from list of choices."""
     TEST_CONFIG = {"myList": "bla"}
     TEST_CONFIG_ERR = {"myList": "other"}
     TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.choice("bla", "boo")}
@@ -33,7 +33,7 @@ def test_validate_choice():
 
 
 def test_validate_intrange():
-    """Validate a list."""
+    """Validate integer within a range."""
     TEST_CONFIG = {"myList": 42}
     TEST_CONFIG_ERR = {"myList": 0}
     TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.int_range(40, 46)}
@@ -45,7 +45,7 @@ def test_validate_intrange():
 
 
 def test_validate_intpercent():
-    """Validate a list."""
+    """Validate percent values."""
     TEST_CONFIG = {"myList": 42}
     TEST_CONFIG_ERR = {"myList": 200}
     TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.percent_integer}
