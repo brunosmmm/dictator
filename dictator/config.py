@@ -6,6 +6,7 @@ from dictator.errors import (
     MissingDependencyError,
     KeyDeclarationError,
     UnknownKeyError,
+    DefaultValidatorError,
 )
 from dictator.validators.dependency import DeferValidation
 
@@ -78,11 +79,18 @@ def validate_config(
     """Validate configuration."""
 
     def _get_validate_fn(entry):
-        return (
+        fn = (
             defaults.DEFAULT_VALIDATORS.get_by_type(entry)
             if isinstance(entry, type)
             else entry
         )
+        if hasattr(fn, "_dictator_meta") and fn._dictator_meta["outer"] is True:
+            # this is a default generator that hasnt been called
+            raise DefaultValidatorError(
+                "default validator generator was not initialized"
+            )
+
+        return fn
 
     # pass validation config args down
     vargs = {"verbosity": verbosity}

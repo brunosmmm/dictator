@@ -86,18 +86,29 @@ class _DefaultValidators:
         def _validate_fn(_value, **kwargs):
             return _value
 
+        # insert metadata
+        _validate_fn._dictator_meta = {"decorator": True, "outer": False}
+
         return _validate_fn
 
     @staticmethod
     def _make_default_with_args(decorator):
         """Build default validator function builder."""
+        if not issubclass(decorator, Validator):
+            raise DefaultValidatorError("must be a subclass of Validator")
 
         def _outer_validate_fn(*args, **kwargs):
             @decorator(*args, **kwargs)
             def _validate_fn(_value, **_kwargs):
                 return _value
 
+            # insert metadata
+            _validate_fn._dictator_meta = {"decorator": True, "outer": False}
+
             return _validate_fn
+
+        # insert metadata
+        _outer_validate_fn._dictator_meta = {"decorator": True, "outer": True}
 
         return _outer_validate_fn
 
