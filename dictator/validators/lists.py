@@ -4,6 +4,7 @@ from dictator.validators import Validator
 from dictator.validators.base import ValidateType
 from dictator.errors import ValidationError
 import dictator.config
+import dictator.validators.default
 
 
 class ValidateChoice(Validator):
@@ -61,5 +62,35 @@ class SubListValidator(Validator):
                 ],
                 **kwargs,
             )
+
+        return _validate
+
+
+class HomogeneousValidator(Validator):
+    """Validate that list elements are homogeneously typed."""
+
+    _DEFAULT_NAME = "list_type"
+
+    def __init__(self, validator, **kwargs):
+        """Initialize."""
+        if not callable(validator) or not isinstance(validator, type):
+            raise TypeError(
+                "validator must either be a callable or a python type"
+            )
+        super().__init__()
+        self._validator = validator
+
+    def __call__(self, fn):
+        """Decorator."""
+
+        @ValidateType((tuple, list))
+        def _validate(_value, **kwargs):
+            validate_fn = (
+                dictator.default.DEFAULT_VALIDATORS.get_by_type(self._validator)
+                if isinstance(self._validator, type)
+                else self._validator
+            )
+            modified_value = [validate_fn(item) for item in _value]
+            return fn(modified_value, **kwargs)
 
         return _validate

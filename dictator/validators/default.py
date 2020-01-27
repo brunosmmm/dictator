@@ -1,5 +1,6 @@
 """Default Validators."""
 
+from dictator.validators import Validator
 from dictator.validators.base import (
     validate_integer,
     validate_string,
@@ -16,13 +17,19 @@ from dictator.validators.integer import (
     ValidateIntRange,
 )
 
-from dictator.validators.lists import ValidateChoice, SubListValidator
+from dictator.validators.lists import (
+    ValidateChoice,
+    SubListValidator,
+    HomogeneousValidator,
+)
 from dictator.validators.maps import SubDictValidator
 
 from dictator.validators.dependency import (
     KeyDependency,
     KeyDependencyMap,
 )
+
+from dictator.errors import DefaultValidatorError
 
 
 class _DefaultValidators:
@@ -52,6 +59,7 @@ class _DefaultValidators:
         SubDictValidator,
         KeyDependency,
         KeyDependencyMap,
+        HomogeneousValidator,
     )
 
     DEFAULT_VALIDATOR_BY_TYPE = {

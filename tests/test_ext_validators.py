@@ -54,3 +54,15 @@ def test_validate_intpercent():
 
     with pytest.raises(ConfigurationError):
         validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ)
+
+
+def test_validate_homogeneous():
+    """Validate homogeneous list."""
+    TEST_CONFIG = {"myList": [1, 2, 3, 4]}
+    TEST_CONFIG_ERR = {"myList": [1, True, 2, 3]}
+    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.list_type(int)}
+
+    validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
+
+    with pytest.raises(ConfigurationError):
+        validate_config(TEST_CONFIG_ERR, TEST_CONFIG_REQ)
