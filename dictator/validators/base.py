@@ -56,6 +56,8 @@ def validate_integer(fn):
                 return fn(int(h.group(2), 16), **kwargs)
 
             raise ValidationError("cannot validate as integer")
+        elif isinstance(_value, bool):
+            raise ValidationError("cannot validate as integer, got boolean")
         elif isinstance(_value, int):
             return fn(_value, **kwargs)
 
