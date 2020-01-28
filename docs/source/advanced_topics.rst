@@ -1,5 +1,7 @@
 .. _advanced_topics:
 
+.. highlight:: python
+
 Advanced Topics
 ===============
 
