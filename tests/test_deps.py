@@ -3,7 +3,6 @@
 import pytest
 from dictator.config import validate_config
 from dictator.errors import ConfigurationError
-from dictator.validators.default import DEFAULT_VALIDATORS
 from dictator.validators.dependency import KeyDependency, KeyDependencyMap
 
 
@@ -11,7 +10,7 @@ def test_dependency():
     """Test key dependency."""
     TEST_CONFIG = {"myKey": "someValue", "myDependency": 42}
     TEST_CONFIG_ERR = {"myKey": "someValue"}  # missing dependency
-    TEST_CONFIG_REQ = {"myKey": DEFAULT_VALIDATORS.dependency("myDependency")}
+    TEST_CONFIG_REQ = {"myKey": KeyDependency("myDependency")}
     TEST_CONFIG_OPT = {"myDependency": int}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ, TEST_CONFIG_OPT)
@@ -25,9 +24,7 @@ def test_dependency_map():
     TEST_CONFIG = {"myKey": "someValue", "someKey": 42, "otherKey": "bla"}
     TEST_CONFIG_ERR = {"myKey": "someValue"}  # missing dependency
     TEST_CONFIG_REQ = {
-        "myKey": DEFAULT_VALIDATORS.dependency_map(
-            someValue="someKey", otherValue="otherKey"
-        )
+        "myKey": KeyDependencyMap(someValue="someKey", otherValue="otherKey")
     }
     TEST_CONFIG_OPT = {"someKey": int, "otherKey": str}
 

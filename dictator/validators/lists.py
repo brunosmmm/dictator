@@ -4,7 +4,15 @@ from dictator.validators import Validator
 from dictator.validators.base import ValidateType
 from dictator.errors import ValidationError
 import dictator.config
-import dictator.validators.default
+
+from dictator.validators.base import (
+    validate_integer,
+    validate_string,
+    validate_list,
+    validate_dict,
+    validate_float,
+    validate_boolean,
+)
 
 
 class ValidateChoice(Validator):
@@ -17,19 +25,14 @@ class ValidateChoice(Validator):
         super().__init__()
         self._choices = choices
 
-    def __call__(self, fn):
-        """Decorator."""
-
-        def _validate(_value, **kwargs):
-            """Perform validation."""
-            if _value not in self._choices:
-                choices = ", ".join(self._choices)
-                raise ValidationError(
-                    f"value '{_value}' is not a valid choice, choose from [{choices}]"
-                )
-            return fn(_value, **kwargs)
-
-        return _validate
+    def validate(self, _value, **kwargs):
+        """Perform validation."""
+        if _value not in self._choices:
+            choices = ", ".join(self._choices)
+            raise ValidationError(
+                f"value '{_value}' is not a valid choice, choose from [{choices}]"
+            )
+        return _value
 
 
 class SubListValidator(Validator):
@@ -47,29 +50,30 @@ class SubListValidator(Validator):
         self._required = required_keys
         self._optional = optional_keys
 
-    def __call__(self, fn):
-        """Decorator."""
-
-        @ValidateType((tuple, list))
-        def _validate(_value, **kwargs):
-            """Perform sub-validation."""
-            return fn(
-                [
-                    dictator.config.validate_config(
-                        entry, self._required, self._optional
-                    )
-                    for entry in _value
-                ],
-                **kwargs,
+    @ValidateType((tuple, list))
+    def validate(self, _value, **kwargs):
+        """Perform sub-validation."""
+        return [
+            dictator.config.validate_config(
+                entry, self._required, self._optional
             )
-
-        return _validate
+            for entry in _value
+        ]
 
 
 class HomogeneousValidator(Validator):
     """Validate that list elements are homogeneously typed."""
 
     _DEFAULT_NAME = "list_type"
+
+    DEFAULT_VALIDATOR_BY_TYPE = {
+        int: validate_integer,
+        str: validate_string,
+        list: validate_list,
+        dict: validate_dict,
+        bool: validate_boolean,
+        float: validate_float,
+    }
 
     def __init__(self, validator, **kwargs):
         """Initialize."""
@@ -80,19 +84,12 @@ class HomogeneousValidator(Validator):
         super().__init__()
         self._validator = validator
 
-    def __call__(self, fn):
-        """Decorator."""
-
-        @ValidateType((tuple, list))
-        def _validate(_value, **kwargs):
-            validate_fn = (
-                dictator.validators.default.DEFAULT_VALIDATORS.get_by_type(
-                    self._validator
-                )
-                if isinstance(self._validator, type)
-                else self._validator
-            )
-            modified_value = [validate_fn(item) for item in _value]
-            return fn(modified_value, **kwargs)
-
-        return _validate
+    @ValidateType((tuple, list))
+    def validate(self, _value, **kwargs):
+        validate_fn = (
+            self.DEFAULT_VALIDATOR_BY_TYPE[self._validator]
+            if isinstance(self._validator, type)
+            else self._validator
+        )
+        modified_value = [validate_fn(item) for item in _value]
+        return modified_value

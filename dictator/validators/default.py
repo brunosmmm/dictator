@@ -35,7 +35,7 @@ from dictator.errors import DefaultValidatorError
 class _DefaultValidators:
     """Default validators."""
 
-    VALIDATE_DECORATORS_NOARGS = (
+    VALIDATE_FUNCTIONS = (
         validate_integer,
         validate_positive_integer,
         validate_string,
@@ -61,15 +61,6 @@ class _DefaultValidators:
         KeyDependencyMap,
         HomogeneousValidator,
     )
-
-    DEFAULT_VALIDATOR_BY_TYPE = {
-        int: "integer",
-        str: "string",
-        list: "list",
-        dict: "dict",
-        bool: "boolean",
-        float: "float",
-    }
 
     def __init__(self):
         """Initialize."""
@@ -119,13 +110,6 @@ class _DefaultValidators:
         _outer_validate_fn._dictator_meta = {"decorator": True, "outer": True}
 
         return _outer_validate_fn
-
-    def get_by_type(self, _type):
-        """Get default validator by type."""
-        if _type in self.DEFAULT_VALIDATOR_BY_TYPE:
-            return getattr(self, self.DEFAULT_VALIDATOR_BY_TYPE[_type])
-
-        raise TypeError("default validator not available for type f'{_type}'")
 
     def __getattr__(self, name):
         """Get attribute."""

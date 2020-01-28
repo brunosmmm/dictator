@@ -1,6 +1,13 @@
 """Validate test configuration."""
 
-import dictator.validators.default as defaults
+from dictator.validators.base import (
+    validate_integer,
+    validate_string,
+    validate_list,
+    validate_dict,
+    validate_float,
+    validate_boolean,
+)
 from dictator.errors import (
     MissingRequiredKeyError,
     MissingDependencyError,
@@ -9,6 +16,7 @@ from dictator.errors import (
     DefaultValidatorError,
 )
 from dictator.validators.dependency import DeferValidation
+from dictator.validators import Validator
 
 VERBOSITY = {"error": 3, "warning": 2, "info": 1, "debug": 0}
 VERBOSITY_HEADERS = {
@@ -16,6 +24,15 @@ VERBOSITY_HEADERS = {
     "warning": "WARNING",
     "info": "",
     "debug": "DEBUG",
+}
+
+DEFAULT_VALIDATOR_BY_TYPE = {
+    int: validate_integer,
+    str: validate_string,
+    list: validate_list,
+    dict: validate_dict,
+    bool: validate_boolean,
+    float: validate_float,
 }
 
 
@@ -67,6 +84,26 @@ def _config_pre_checklist(fn):
     return _check
 
 
+def _get_validate_fn(entry):
+    if isinstance(entry, type):
+        if entry not in DEFAULT_VALIDATOR_BY_TYPE:
+            raise DefaultValidatorError(
+                f"no validator available for python type '{entry}'"
+            )
+        fn = DEFAULT_VALIDATOR_BY_TYPE[entry]
+    elif isinstance(entry, Validator):
+        fn = entry.validate
+    else:
+        fn = entry
+    if hasattr(fn, "_dictator_meta") and fn._dictator_meta["outer"] is True:
+        # this is a default generator that hasnt been called
+        raise DefaultValidatorError(
+            "default validator generator was not initialized"
+        )
+
+    return fn
+
+
 @_config_pre_checklist
 def validate_config(
     config,
@@ -77,20 +114,6 @@ def validate_config(
     allow_unknown=True,
 ):
     """Validate configuration."""
-
-    def _get_validate_fn(entry):
-        fn = (
-            defaults.DEFAULT_VALIDATORS.get_by_type(entry)
-            if isinstance(entry, type)
-            else entry
-        )
-        if hasattr(fn, "_dictator_meta") and fn._dictator_meta["outer"] is True:
-            # this is a default generator that hasnt been called
-            raise DefaultValidatorError(
-                "default validator generator was not initialized"
-            )
-
-        return fn
 
     # pass validation config args down
     vargs = {"verbosity": verbosity}

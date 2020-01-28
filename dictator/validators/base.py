@@ -23,108 +23,71 @@ class ValidateType(Validator):
         """Get target type."""
         return self._type
 
-    def __call__(self, fn):
-        """Decorator."""
-
-        def _validate(_value, **kwargs):
-            """Perform validation."""
-            if not isinstance(_value, self.target_type):
-                if hasattr(self.target_type, "__name__"):
-                    type_name = self.target_type.__name__
-                else:
-                    type_name = self.target_type
-                raise ValidationError(f"value must be of type '{type_name}'")
-
-            return fn(_value, **kwargs)
-
-        return _validate
-
-
-def validate_integer(fn):
-    """Validate integer."""
-
-    def _validate(_value, **kwargs):
+    def validate(self, _value, **kwargs):
         """Perform validation."""
-        if isinstance(_value, str):
-            # try converting
-            h = HEX_REGEX.match(_value)
-            b = BIN_REGEX.match(_value)
-            if h is not None:
-                if h.group(1) is None and b is not None:
-                    # is actually binary
-                    return fn(int(h.group(2), 2), **kwargs)
-                return fn(int(h.group(2), 16), **kwargs)
+        if not isinstance(_value, self.target_type):
+            if hasattr(self.target_type, "__name__"):
+                type_name = self.target_type.__name__
+            else:
+                type_name = self.target_type
+            raise ValidationError(f"value must be of type '{type_name}'")
 
-            raise ValidationError("cannot validate as integer")
-        elif isinstance(_value, bool):
-            raise ValidationError("cannot validate as integer, got boolean")
-        elif isinstance(_value, int):
-            return fn(_value, **kwargs)
+        return _value
+
+
+def validate_integer(_value, **kwargs):
+    """Validate integer value."""
+    if isinstance(_value, str):
+        # try converting
+        h = HEX_REGEX.match(_value)
+        b = BIN_REGEX.match(_value)
+        if h is not None:
+            if h.group(1) is None and b is not None:
+                # is actually binary
+                return int(h.group(2), 2)
+            return int(h.group(2), 16)
 
         raise ValidationError("cannot validate as integer")
+    elif isinstance(_value, bool):
+        raise ValidationError("cannot validate as integer, got boolean")
+    elif isinstance(_value, int):
+        return _value
 
-    return _validate
+    raise ValidationError("cannot validate as integer")
 
 
-def validate_string(fn):
+@ValidateType(str)
+def validate_string(_value, **kwargs):
     """Validate string value."""
-
-    @ValidateType(str)
-    def _validate(_value, **kwargs):
-        """Perform validation."""
-        return fn(_value, **kwargs)
-
-    return _validate
+    return _value
 
 
-def validate_list(fn):
+@ValidateType((tuple, list))
+def validate_list(_value, **kwargs):
     """Validate lists."""
-
-    @ValidateType((tuple, list))
-    def _validate(_value, **kwargs):
-        """Perform validation"""
-        return fn(_value, **kwargs)
-
-    return _validate
+    return _value
 
 
-def validate_dict(fn):
+@ValidateType(dict)
+def validate_dict(_value, **kwargs):
     """Validate dictionaries."""
-
-    @ValidateType(dict)
-    def _validate(_value, **kwargs):
-        """Perform validation."""
-        return fn(_value, **kwargs)
-
-    return _validate
+    return _value
 
 
-def validate_boolean(fn):
+@ValidateType(bool)
+def validate_boolean(_value, **kwargs):
     """Validate boolean value."""
-
-    @ValidateType(bool)
-    def _validate(_value, **kwargs):
-        return fn(_value, **kwargs)
-
-    return _validate
+    return _value
 
 
-def validate_float(fn):
+@ValidateType(float)
+def validate_float(_value, **kwargs):
     """Validate floating point value."""
-
-    @ValidateType(float)
-    def _validate(_value, **kwargs):
-        return fn(_value, **kwargs)
-
-    return _validate
+    return _value
 
 
-def validate_null(fn):
+def validate_null(_value, **kwargs):
     """Validate null value."""
-
-    def _validate(_value, **kwargs):
-        if _value is not None:
-            raise ValidationError("value is not null")
-        return fn(_value, **kwargs)
-
-    return _validate
+    if _value is not None:
+        raise ValidationError("value is not null")
+    return _value

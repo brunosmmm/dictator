@@ -16,40 +16,24 @@ class ValidateIntRange(Validator):
         self._start = start
         self._end = end
 
-    def __call__(self, fn):
-        """Decorator."""
-
-        @validate_integer
-        def _validate(_value, **kwargs):
-            """Perform validation."""
-            if _value < self._start or _value > self._end:
-                raise ValidationError(
-                    "value out of [{}, {}] range".format(self._start, self._end)
-                )
-            return fn(_value, **kwargs)
-
-        return _validate
-
-
-def validate_positive_integer(fn):
-    """Validate positive integer."""
-
-    @validate_integer
-    def _validate(_value, **kwargs):
+    def validate(self, _value, **kwargs):
         """Perform validation."""
-        if _value < 0:
-            raise ValidationError("value must be a positive integer")
-        return fn(_value, **kwargs)
+        _value = validate_integer(_value, **kwargs)
+        if (self._start is not None and _value < self._start) or (
+            self._end is not None and _value > self._end
+        ):
+            raise ValidationError(
+                "value out of [{}, {}] range".format(self._start, self._end)
+            )
+        return _value
 
-    return _validate
+
+@ValidateIntRange(0, None)
+def validate_positive_integer(_value, **kwargs):
+    return _value
 
 
-def validate_percent_integer(fn):
+@ValidateIntRange(0, 100)
+def validate_percent_integer(_value, **kwargs):
     """Validate percent value (integer)."""
-
-    @ValidateIntRange(0, 100)
-    def _validate(_value, **kwargs):
-        """Perform validation."""
-        return fn(_value, **kwargs)
-
-    return _validate
+    return _value

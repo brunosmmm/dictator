@@ -37,26 +37,21 @@ class KeyDependencyMap(Validator):
                         )
         self._depmap = dependency_map
 
-    def __call__(self, fn):
-        """Decorator."""
+    def validate(self, _value, **kwargs):
+        """Perform checks."""
 
-        def _validate(_value, **kwargs):
-            """Perform checks."""
+        missing_deps = []
+        deps = self._depmap[_value]
+        if isinstance(deps, str):
+            deps = (deps,)
+        for dep in deps:
+            if dep not in kwargs:
+                missing_deps.append(dep)
 
-            missing_deps = []
-            deps = self._depmap[_value]
-            if isinstance(deps, str):
-                deps = (deps,)
-            for dep in deps:
-                if dep not in kwargs:
-                    missing_deps.append(dep)
+        if missing_deps:
+            raise DeferValidation(*missing_deps)
 
-            if missing_deps:
-                raise DeferValidation(*missing_deps)
-
-            return fn(_value, **kwargs)
-
-        return _validate
+        return _value
 
 
 class KeyDependency(Validator):
@@ -72,20 +67,15 @@ class KeyDependency(Validator):
                 raise TypeError("dependencies must be strings")
         self._deps = dependencies
 
-    def __call__(self, fn):
-        """Decorator."""
+    def validate(self, _value, **kwargs):
+        """Perform checks."""
 
-        def _validate(_value, **kwargs):
-            """Perform checks."""
+        missing_deps = []
+        for dep in self._deps:
+            if dep not in kwargs:
+                missing_deps.append(dep)
 
-            missing_deps = []
-            for dep in self._deps:
-                if dep not in kwargs:
-                    missing_deps.append(dep)
+        if missing_deps:
+            raise DeferValidation(*missing_deps)
 
-            if missing_deps:
-                raise DeferValidation(*missing_deps)
-
-            return fn(_value, **kwargs)
-
-        return _validate
+        return _value

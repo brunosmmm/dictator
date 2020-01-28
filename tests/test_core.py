@@ -2,7 +2,7 @@
 
 import pytest
 
-from dictator.validators.default import DEFAULT_VALIDATORS
+from dictator.validators.base import validate_null
 from dictator.config import validate_config
 from dictator.errors import ConfigurationError, ValidationError
 
@@ -102,7 +102,7 @@ def test_validate_null():
     """Validate a list."""
     TEST_CONFIG = {"myList": None}
     TEST_CONFIG_ERR = {"myList": "other"}
-    TEST_CONFIG_REQ = {"myList": DEFAULT_VALIDATORS.null}
+    TEST_CONFIG_REQ = {"myList": validate_null}
 
     validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
 

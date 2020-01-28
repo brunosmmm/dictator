@@ -1,5 +1,6 @@
-"""Base Validators."""
 """Validators."""
+
+from functools import wraps
 
 
 class Validator:
@@ -14,3 +15,17 @@ class Validator:
             raise ValueError("default name unknown")
 
         return cls._DEFAULT_NAME
+
+    def validate(self, _value, **kwargs):
+        """Perform validation."""
+        raise NotImplementedError
+
+    def __call__(self, fn):
+        """Validate as decorator."""
+
+        @wraps(fn)
+        def _validate(*args, **kwargs):
+            _value = fn(*args, **kwargs)
+            return self.validate(_value, **kwargs)
+
+        return _validate

@@ -20,17 +20,9 @@ class SubDictValidator(Validator):
         self._required = required_keys
         self._optional = optional_keys
 
-    def __call__(self, fn):
-        """Decorator."""
-
-        @ValidateType(dict)
-        def _validate(_value, **kwargs):
-            """Perform sub-validation."""
-            return fn(
-                dictator.config.validate_config(
-                    _value, self._required, self._optional
-                ),
-                **kwargs,
-            )
-
-        return _validate
+    @ValidateType(dict)
+    def validate(self, _value, **kwargs):
+        """Perform sub-validation."""
+        return dictator.config.validate_config(
+            _value, self._required, self._optional
+        )
