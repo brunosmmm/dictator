@@ -43,12 +43,16 @@ class ValidatorFactory(Validator):
         if not callable(validate_fn):
             raise TypeError("validate_fn must be callable")
         if isinstance(validate_fn, Validator):
-            self.validate = validate_fn.validate
+            self._validatefn = validate_fn.validate
         else:
-            self.validate = validate_fn
+            self._validatefn = validate_fn
+
+    def validate(self, _value, **kwargs):
+        """Perform validation."""
+        return self._validatefn(_value, **kwargs)
 
 
-def validate_integer(_value, **kwargs):
+def _validate_integer(_value, **kwargs):
     """Validate integer value."""
     if isinstance(_value, str):
         # try converting
@@ -74,6 +78,7 @@ validate_list = ValidatorFactory(ValidateType((tuple, list)))
 validate_dict = ValidatorFactory(ValidateType(dict))
 validate_boolean = ValidatorFactory(ValidateType(bool))
 validate_float = ValidatorFactory(ValidateType(float))
+validate_integer = ValidatorFactory(_validate_integer)
 
 
 def validate_null(_value, **kwargs):

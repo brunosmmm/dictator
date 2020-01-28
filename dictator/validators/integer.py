@@ -1,7 +1,7 @@
 """Composite integer validators."""
 
 from dictator.validators import Validator
-from dictator.validators.base import validate_integer
+from dictator.validators.base import ValidatorFactory, validate_integer
 from dictator.errors import ValidationError
 
 
@@ -16,9 +16,9 @@ class ValidateIntRange(Validator):
         self._start = start
         self._end = end
 
+    @validate_integer
     def validate(self, _value, **kwargs):
         """Perform validation."""
-        _value = validate_integer(_value, **kwargs)
         if (self._start is not None and _value < self._start) or (
             self._end is not None and _value > self._end
         ):
@@ -28,12 +28,5 @@ class ValidateIntRange(Validator):
         return _value
 
 
-@ValidateIntRange(0, None)
-def validate_positive_integer(_value, **kwargs):
-    return _value
-
-
-@ValidateIntRange(0, 100)
-def validate_percent_integer(_value, **kwargs):
-    """Validate percent value (integer)."""
-    return _value
+validate_positive_integer = ValidatorFactory(ValidateIntRange(0, None))
+validate_percent_integer = ValidatorFactory(ValidateIntRange(0, 100))

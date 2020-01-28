@@ -91,5 +91,7 @@ class HomogeneousValidator(Validator):
             if isinstance(self._validator, type)
             else self._validator
         )
+        if isinstance(validate_fn, Validator):
+            validate_fn = validate_fn.validate
         modified_value = [validate_fn(item) for item in _value]
         return modified_value
