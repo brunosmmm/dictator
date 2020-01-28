@@ -2,13 +2,12 @@
 Welcome to dictator's documentation!
 ====================================
 
-* :ref:`quickstart`
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    quickstart
+   advanced_topics
 
 Indices and tables
 ==================

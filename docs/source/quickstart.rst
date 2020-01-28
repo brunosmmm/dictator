@@ -110,8 +110,7 @@ How do we validate that:
 ::
 
   from dictator.validators.base import validate_string
-  from dictator.validators.lists import ValidateChoice
-  from dictator.validators.default import DEFAULT_VALIDATORS
+  from dictator.validators.lists import ValidateChoice, SubListValidator
   from dictator.errors import ValidationError
 
 
@@ -135,66 +134,9 @@ How do we validate that:
   MEANING_REQ = {"what": validate_meanings}
   TEST_CONFIG_REQ = {
       "answer": validate_answer,
-      "meanings": DEFAULT_VALIDATORS.sub_list(MEANING_REQ),
+      "meanings": SubListValidator(MEANING_REQ),
   }
 
 The base validators are actually implemented in this way, and the default validator module generates
 functions that are decorated by the base validators.
 
-Stateful validation
--------------------
-
-Next, a more complex example shows how stateful validation can be performed.
-
-::
-
-  from dictator.config import validate_config
-  from dictator.validators import Validator
-
-
-  class MeaningValidator(Validator):
-      """Validate real meaning."""
-
-      def __init__(self, *possible_meanings, **kwargs):
-          """Initialize."""
-          super().__init__()
-          self._possible_meanings = possible_meanings
-          self._meanings = []
-
-      def __call__(self, fn):
-          """Use as decorator."""
-
-          @ValidateChoice(*self._possible_meanings)
-          def _validate(_value, **kwargs):
-              self._meanings.append(value)
-              return fn(_value, **kwargs)
-
-          return _validate
-
-      @property
-      def correct_meaning(self):
-          """Get whether the meaning is correct."""
-          if "life" in self._meanings and "universe" in self._meanings:
-              return True
-
-          return False
-
-
-  stateful_meaning_validator = MeaningValidator("life", "universe")
-
-
-  @stateful_meaning_validator
-  def stateful_validation(meaning, **kwargs):
-      """Perform a stateful validation."""
-      print(f"got a meaning: {meaning}")
-      return meaning
-
-
-  # our meanings are sub-configurations!
-  MEANING_REQ = {"what": stateful_validation}
-  TEST_CONFIG_REQ = {
-      "answer": None,
-      "meanings": DEFAULT_VALIDATORS.sub_list(MEANING_REQ),
-  }
-  validate_config(TEST_CONFIG, TEST_CONFIG_REQ)
-  print(stateful_meaning_validator.correct_answer)
