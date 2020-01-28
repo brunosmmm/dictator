@@ -3,6 +3,7 @@
 import re
 from dictator.errors import ValidationError
 from dictator.validators import Validator
+from typing import Type, Callable, Any, Tuple
 
 HEX_REGEX = re.compile(r"^(0x)?([0-9A-Fa-f]+)$")
 BIN_REGEX = re.compile(r"^(0b)?([0-1]+)$")
@@ -13,24 +14,26 @@ class ValidateType(Validator):
 
     _DEFAULT_NAME = "type"
 
-    def __init__(self, _type):
-        """Initialize."""
+    def __init__(self, *_types: Type):
+        """Initialize.
+
+        Parameters
+        ----------
+        type
+            The expected python type
+        """
         super().__init__()
-        self._type = _type
+        self._types = _types
 
     @property
-    def target_type(self):
+    def target_types(self) -> Tuple[Type, ...]:
         """Get target type."""
-        return self._type
+        return self._types
 
     def validate(self, _value, **kwargs):
         """Perform validation."""
-        if not isinstance(_value, self.target_type):
-            if hasattr(self.target_type, "__name__"):
-                type_name = self.target_type.__name__
-            else:
-                type_name = self.target_type
-            raise ValidationError(f"value must be of type '{type_name}'")
+        if not isinstance(_value, self.target_types):
+            raise ValidationError(f"value has unexpected type")
 
         return _value
 
@@ -38,8 +41,14 @@ class ValidateType(Validator):
 class ValidatorFactory(Validator):
     """Validator factory."""
 
-    def __init__(self, validate_fn):
-        """Initialize."""
+    def __init__(self, validate_fn: Callable):
+        """Initialize.
+
+        Parameters
+        ----------
+        validate_fn
+            Some callable that performs actual validation
+        """
         if not callable(validate_fn):
             raise TypeError("validate_fn must be callable")
         if isinstance(validate_fn, Validator):
@@ -52,8 +61,16 @@ class ValidatorFactory(Validator):
         return self._validatefn(_value, **kwargs)
 
 
-def _validate_integer(_value, **kwargs):
-    """Validate integer value."""
+def _validate_integer(_value: Any, **kwargs: Any) -> int:
+    """Validate integer value.
+
+    Parameters
+    ----------
+    _value
+        Some value
+    kwargs
+        Other metadata
+    """
     if isinstance(_value, str):
         # try converting
         h = HEX_REGEX.match(_value)
@@ -74,15 +91,23 @@ def _validate_integer(_value, **kwargs):
 
 
 validate_string = ValidatorFactory(ValidateType(str))
-validate_list = ValidatorFactory(ValidateType((tuple, list)))
+validate_list = ValidatorFactory(ValidateType(tuple, list))
 validate_dict = ValidatorFactory(ValidateType(dict))
 validate_boolean = ValidatorFactory(ValidateType(bool))
 validate_float = ValidatorFactory(ValidateType(float))
 validate_integer = ValidatorFactory(_validate_integer)
 
 
-def validate_null(_value, **kwargs):
-    """Validate null value."""
+def validate_null(_value: Any, **kwargs: Any) -> None:
+    """Validate null value.
+
+    Parameters
+    ---------
+    _value
+        Some value
+    kwargs
+        Other metadata
+    """
     if _value is not None:
         raise ValidationError("value is not null")
     return _value

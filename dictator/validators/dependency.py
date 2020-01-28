@@ -1,18 +1,25 @@
 """Utilities."""
 
 from dictator.validators import Validator
+from typing import Tuple, Any
 
 
 class DeferValidation(Exception):
     """Defer key validation."""
 
-    def __init__(self, *depends):
-        """Initialize."""
+    def __init__(self, *depends: str):
+        """Initialize.
+
+        Parameters
+        ----------
+        depends
+            List of key names that will be required
+        """
         self._depends = depends
         super().__init__("")
 
     @property
-    def depends(self):
+    def depends(self) -> Tuple[str, ...]:
         """Get key dependencies."""
         return self._depends
 
@@ -22,8 +29,14 @@ class KeyDependencyMap(Validator):
 
     _DEFAULT_NAME = "dependency_map"
 
-    def __init__(self, **dependency_map):
-        """Initialize."""
+    def __init__(self, **dependency_map: str):
+        """Initialize.
+
+        Parameters
+        ----------
+        dependency_map
+            Map of dependencies according to current key value
+        """
         super().__init__()
         for name, dep in dependency_map.items():
             if not isinstance(dep, (str, tuple, str)):
@@ -59,8 +72,16 @@ class KeyDependency(Validator):
 
     _DEFAULT_NAME = "dependency"
 
-    def __init__(self, *dependencies, **kwargs):
-        """Initialize."""
+    def __init__(self, *dependencies: str, **kwargs: Any):
+        """Initialize.
+
+        Parameters
+        ----------
+        dependencies:
+            Key names which are dependencies
+        kwargs
+            Any other metadata
+        """
         super().__init__()
         for dep in dependencies:
             if not isinstance(dep, str):

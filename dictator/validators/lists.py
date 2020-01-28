@@ -1,5 +1,6 @@
 """List-based validators."""
 
+from typing import Any, Dict, Union, Type, Callable
 from dictator.validators import Validator
 from dictator.validators.base import ValidateType
 from dictator.errors import ValidationError
@@ -20,8 +21,16 @@ class ValidateChoice(Validator):
 
     _DEFAULT_NAME = "choice"
 
-    def __init__(self, *choices, **kwargs):
-        """Initialize."""
+    def __init__(self, *choices: Any, **kwargs: Any):
+        """Initialize.
+
+        Parameters
+        ----------
+        choices
+            List of choices
+        kwargs
+            Any other metadata
+        """
         super().__init__()
         self._choices = choices
 
@@ -40,8 +49,23 @@ class SubListValidator(Validator):
 
     _DEFAULT_NAME = "sub_list"
 
-    def __init__(self, required_keys, optional_keys=None, **kwargs):
-        """Initialize."""
+    def __init__(
+        self,
+        required_keys: Dict[str, Any],
+        optional_keys: Union[None, Dict[str, Any]] = None,
+        **kwargs: Any,
+    ):
+        """Initialize.
+
+        Parameters
+        ----------
+        required_keys
+            Mapping of required keys and validators
+        optional_keys
+            Mapping of optional keys and validators
+        kwargs
+            Any other metadata
+        """
         super().__init__()
         if not isinstance(required_keys, dict):
             raise TypeError("required_keys must be a dictionary")
@@ -50,7 +74,7 @@ class SubListValidator(Validator):
         self._required = required_keys
         self._optional = optional_keys
 
-    @ValidateType((tuple, list))
+    @ValidateType(tuple, list)
     def validate(self, _value, **kwargs):
         """Perform sub-validation."""
         return [
@@ -75,8 +99,16 @@ class HomogeneousValidator(Validator):
         float: validate_float,
     }
 
-    def __init__(self, validator, **kwargs):
-        """Initialize."""
+    def __init__(self, validator: Union[Type, Callable], **kwargs: Any):
+        """Initialize.
+
+        Parameters
+        ----------
+        validator
+            A validator object
+        kwargs
+            Any other metadata
+        """
         if not callable(validator) or not isinstance(validator, type):
             raise TypeError(
                 "validator must either be a callable or a python type"
@@ -84,7 +116,7 @@ class HomogeneousValidator(Validator):
         super().__init__()
         self._validator = validator
 
-    @ValidateType((tuple, list))
+    @ValidateType(tuple, list)
     def validate(self, _value, **kwargs):
         validate_fn = (
             self.DEFAULT_VALIDATOR_BY_TYPE[self._validator]

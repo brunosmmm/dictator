@@ -3,6 +3,7 @@
 from dictator.validators import Validator
 from dictator.validators.base import ValidatorFactory, validate_integer
 from dictator.errors import ValidationError
+from typing import Any, Union
 
 
 class ValidateIntRange(Validator):
@@ -10,8 +11,20 @@ class ValidateIntRange(Validator):
 
     _DEFAULT_NAME = "int_range"
 
-    def __init__(self, start, end, **kwargs):
-        """Initialize."""
+    def __init__(
+        self, start: Union[int, None], end: Union[int, None], **kwargs: Any
+    ):
+        """Initialize.
+
+        Parameters
+        ----------
+        start
+            Start of range interval (can be None for open interval)
+        end
+            End of range interval (can be None for open interval)
+        kwargs
+            Any other metadata
+        """
         super().__init__()
         self._start = start
         self._end = end

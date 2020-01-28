@@ -3,6 +3,7 @@
 from dictator.validators import Validator
 from dictator.validators.base import ValidateType
 import dictator.config
+from typing import Dict, Any, Union
 
 
 class SubDictValidator(Validator):
@@ -10,8 +11,23 @@ class SubDictValidator(Validator):
 
     _DEFAULT_NAME = "sub_dict"
 
-    def __init__(self, required_keys, optional_keys=None):
-        """Initialize."""
+    def __init__(
+        self,
+        required_keys: Dict[str, Any],
+        optional_keys: Union[Dict[str, Any], None] = None,
+        **kwargs: Any
+    ):
+        """Initialize.
+
+        Parameters
+        ----------
+        required_keys
+            Required key mappings
+        optional_keys
+            Optional key mappings
+        kwargs
+            Any other metadata
+        """
         super().__init__()
         if not isinstance(required_keys, dict):
             raise TypeError("required_keys must be a dictionary")
