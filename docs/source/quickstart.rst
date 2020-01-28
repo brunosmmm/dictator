@@ -140,3 +140,20 @@ How do we validate that:
 The base validators are actually implemented in this way, and the default validator module generates
 functions that are decorated by the base validators.
 
+
+Key dependencies
+----------------
+
+Expressing that a key is dependent on another key that potentially hasn't been validated yet is also possible.
+This is accomplished by use of the KeyDependency and KeyDependencyMap validators.
+
+Value-independent dependencies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the dependency to be expressed is *independent* of the current key value, then the KeyDependency validator is used.
+
+Value-dependent dependencies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+On the other hand, if the dependency to be expressed depends itself on the value of the current key, the KeyDependencyMap
+validator should be used.
