@@ -2,13 +2,13 @@
 Welcome to dictator's documentation!
 ====================================
 
-.. automodule:: dictator.config
-    :members:
+* :ref:`quickstart`
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   quickstart
 
 Indices and tables
 ==================
