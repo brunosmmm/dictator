@@ -90,7 +90,11 @@ def _get_validate_fn(entry):
             raise DefaultValidatorError(
                 f"no validator available for python type '{entry}'"
             )
-        fn = DEFAULT_VALIDATOR_BY_TYPE[entry]
+        default_validator = DEFAULT_VALIDATOR_BY_TYPE[entry]
+        if isinstance(default_validator, Validator):
+            fn = default_validator.validate
+        else:
+            fn = default_validator
     elif isinstance(entry, Validator):
         fn = entry.validate
     else:

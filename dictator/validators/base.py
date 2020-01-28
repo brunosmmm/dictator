@@ -35,6 +35,19 @@ class ValidateType(Validator):
         return _value
 
 
+class ValidatorFactory(Validator):
+    """Validator factory."""
+
+    def __init__(self, validate_fn):
+        """Initialize."""
+        if not callable(validate_fn):
+            raise TypeError("validate_fn must be callable")
+        if isinstance(validate_fn, Validator):
+            self.validate = validate_fn.validate
+        else:
+            self.validate = validate_fn
+
+
 def validate_integer(_value, **kwargs):
     """Validate integer value."""
     if isinstance(_value, str):
@@ -56,34 +69,11 @@ def validate_integer(_value, **kwargs):
     raise ValidationError("cannot validate as integer")
 
 
-@ValidateType(str)
-def validate_string(_value, **kwargs):
-    """Validate string value."""
-    return _value
-
-
-@ValidateType((tuple, list))
-def validate_list(_value, **kwargs):
-    """Validate lists."""
-    return _value
-
-
-@ValidateType(dict)
-def validate_dict(_value, **kwargs):
-    """Validate dictionaries."""
-    return _value
-
-
-@ValidateType(bool)
-def validate_boolean(_value, **kwargs):
-    """Validate boolean value."""
-    return _value
-
-
-@ValidateType(float)
-def validate_float(_value, **kwargs):
-    """Validate floating point value."""
-    return _value
+validate_string = ValidatorFactory(ValidateType(str))
+validate_list = ValidatorFactory(ValidateType((tuple, list)))
+validate_dict = ValidatorFactory(ValidateType(dict))
+validate_boolean = ValidatorFactory(ValidateType(bool))
+validate_float = ValidatorFactory(ValidateType(float))
 
 
 def validate_null(_value, **kwargs):
