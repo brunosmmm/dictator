@@ -1,5 +1,7 @@
 .. _quickstart:
 
+.. highlight:: python
+
 Dictator Quickstart
 ===================
 
