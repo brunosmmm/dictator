@@ -1,13 +1,5 @@
 """Validate test configuration."""
 
-from dictator.validators.base import (
-    validate_integer,
-    validate_string,
-    validate_list,
-    validate_dict,
-    validate_float,
-    validate_boolean,
-)
 from dictator.errors import (
     MissingRequiredKeyError,
     MissingDependencyError,
@@ -17,6 +9,7 @@ from dictator.errors import (
 )
 from dictator.validators.dependency import DeferValidation
 from dictator.validators import Validator
+from dictator.validators.base import DEFAULT_VALIDATOR_BY_TYPE
 
 VERBOSITY = {"error": 3, "warning": 2, "info": 1, "debug": 0}
 VERBOSITY_HEADERS = {
@@ -24,15 +17,6 @@ VERBOSITY_HEADERS = {
     "warning": "WARNING",
     "info": "",
     "debug": "DEBUG",
-}
-
-DEFAULT_VALIDATOR_BY_TYPE = {
-    int: validate_integer,
-    str: validate_string,
-    list: validate_list,
-    dict: validate_dict,
-    bool: validate_boolean,
-    float: validate_float,
 }
 
 

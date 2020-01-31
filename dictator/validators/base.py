@@ -111,3 +111,13 @@ def validate_null(_value: Any, **kwargs: Any) -> None:
     if _value is not None:
         raise ValidationError("value is not null")
     return _value
+
+
+DEFAULT_VALIDATOR_BY_TYPE = {
+    int: validate_integer,
+    str: validate_string,
+    list: validate_list,
+    dict: validate_dict,
+    bool: validate_boolean,
+    float: validate_float,
+}
