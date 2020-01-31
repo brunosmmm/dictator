@@ -6,7 +6,10 @@ class ConfigurationError(Exception):
 
 
 class MissingRequiredKeyError(ConfigurationError):
-    """Missing required key error."""
+    """Missing required key error.
+
+    Raised when a key that is described as required is not found.
+    """
 
 
 class MissingDependencyError(ConfigurationError):
