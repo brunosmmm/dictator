@@ -83,11 +83,6 @@ def _get_validate_fn(entry):
         fn = entry.validate
     else:
         fn = entry
-    if hasattr(fn, "_dictator_meta") and fn._dictator_meta["outer"] is True:
-        # this is a default generator that hasnt been called
-        raise DefaultValidatorError(
-            "default validator generator was not initialized"
-        )
 
     return fn
 
