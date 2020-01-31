@@ -1,4 +1,4 @@
-"""Test validator union."""
+"""Test validator combinations."""
 
 import pytest
 from dictator.validators.util import ValidateUnion
