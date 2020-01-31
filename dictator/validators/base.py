@@ -3,7 +3,7 @@
 import re
 from dictator.errors import ValidationError
 from dictator.validators import Validator
-from typing import Type, Callable, Any, Tuple
+from typing import Type, Callable, Any, Tuple, Union
 
 HEX_REGEX = re.compile(r"^(0x)?([0-9A-Fa-f]+)$")
 BIN_REGEX = re.compile(r"^(0b)?([0-1]+)$")
@@ -41,7 +41,7 @@ class ValidateType(Validator):
 class ValidatorFactory(Validator):
     """Validator factory."""
 
-    def __init__(self, validate_fn: Callable):
+    def __init__(self, validate_fn: Union[Callable, Validator]):
         """Initialize.
 
         Parameters

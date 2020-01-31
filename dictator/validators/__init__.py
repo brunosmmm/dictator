@@ -1,7 +1,7 @@
 """Validators."""
 
 from functools import wraps
-from typing import Any, Union
+from typing import Any, Union, Callable
 
 
 class Validator:
@@ -29,7 +29,7 @@ class Validator:
         """
         raise NotImplementedError
 
-    def __call__(self, fn):
+    def __call__(self, fn: Callable) -> Callable:
         """Validate as decorator."""
 
         @wraps(fn)
