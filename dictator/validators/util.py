@@ -1,11 +1,13 @@
 """Utilities."""
 
+from typing import Callable, Union, Type, Any
+
 from dictator.errors import ValidationError
 from dictator.validators import Validator
 from dictator.validators.base import DEFAULT_VALIDATOR_BY_TYPE
 
 
-def invert_condition(fn):
+def invert_condition(fn: Callable) -> Callable:
     """Invert validation condition."""
 
     def _wrapper(_value, **kwargs):
@@ -16,6 +18,8 @@ def invert_condition(fn):
 
         raise ValidationError("validation passed where it shouldn't have")
 
+    return _wrapper
+
 
 class ValidateUnion(Validator):
     """Union of validators.
@@ -23,13 +27,15 @@ class ValidateUnion(Validator):
     Validation succeeds if one of the conditions succeeds.
     """
 
-    def __init__(self, *conditions, **kwargs):
+    def __init__(self, *conditions: Union[Callable, Type], **kwargs: Any):
         """Initialize.
 
         Arguments
         ---------
         conditions
           List of validators (callables)
+        kwargs
+          Any other metadata
         """
         for condition in conditions:
             if not callable(condition) and not isinstance(condition, type):
