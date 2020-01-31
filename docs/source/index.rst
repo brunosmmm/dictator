@@ -8,6 +8,7 @@ Welcome to dictator's documentation!
 
    quickstart
    advanced_topics
+   patterns
 
 Indices and tables
 ==================
