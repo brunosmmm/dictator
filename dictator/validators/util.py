@@ -2,6 +2,7 @@
 
 from dictator.errors import ValidationError
 from dictator.validators import Validator
+from dictator.validators.base import DEFAULT_VALIDATOR_BY_TYPE
 
 
 def invert_condition(fn):
@@ -22,7 +23,7 @@ class ValidateUnion(Validator):
     Validation succeeds if one of the conditions succeeds.
     """
 
-    def __init__(self, *conditions):
+    def __init__(self, *conditions, **kwargs):
         """Initialize.
 
         Arguments
@@ -31,18 +32,24 @@ class ValidateUnion(Validator):
           List of validators (callables)
         """
         for condition in conditions:
-            if not callable(condition):
-                raise TypeError("condition must be a callable")
+            if not callable(condition) and not isinstance(condition, type):
+                raise TypeError("condition must be a callable or a type")
 
             self._conditions = conditions
 
-        def validate(self, _value, **kwargs):
-            """Perform validation."""
-            for condition in self._conditions:
-                try:
-                    ret = condition(_value, **kwargs)
-                    return ret
-                except ValidationError:
-                    continue
+    def validate(self, _value, **kwargs):
+        """Perform validation."""
+        for condition in self._conditions:
+            try:
+                ret = (
+                    DEFAULT_VALIDATOR_BY_TYPE[condition].validate(
+                        _value, **kwargs
+                    )
+                    if isinstance(condition, type)
+                    else condition(_value, **kwargs)
+                )
+                return ret
+            except ValidationError:
+                continue
 
-            raise ValidationError("validate union failed for all conditions")
+        raise ValidationError("validate union failed for all conditions")
