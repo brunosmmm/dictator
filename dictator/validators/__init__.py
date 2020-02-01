@@ -10,7 +10,7 @@ class Validator:
     _DEFAULT_NAME: Union[None, str] = None
 
     @classmethod
-    def get_default_name(cls):
+    def get_default_name(cls) -> str:
         """Get default name."""
         if cls._DEFAULT_NAME is None:
             raise ValueError("default name unknown")

@@ -1,5 +1,7 @@
 """Validate test configuration."""
 
+from typing import Type, Union, Callable, Dict, List, Tuple, Optional
+
 from dictator.errors import (
     MissingRequiredKeyError,
     MissingDependencyError,
@@ -20,7 +22,7 @@ VERBOSITY_HEADERS = {
 }
 
 
-def _default_logger(msg, severity, verbosity):
+def _default_logger(msg: str, severity: str, verbosity: str):
     """Default logger."""
     if VERBOSITY[severity] >= VERBOSITY[verbosity]:
         print(
@@ -34,7 +36,7 @@ def _default_logger(msg, severity, verbosity):
         )
 
 
-def _config_pre_checklist(fn):
+def _config_pre_checklist(fn: Callable) -> Callable:
     """Check configuration types."""
 
     def _check(config, required_keys, optional_keys=None, *args, **kwargs):
@@ -68,7 +70,7 @@ def _config_pre_checklist(fn):
     return _check
 
 
-def _get_validate_fn(entry):
+def _get_validate_fn(entry: Union[Type, Validator, Callable]) -> Callable:
     if isinstance(entry, type):
         if entry not in DEFAULT_VALIDATOR_BY_TYPE:
             raise DefaultValidatorError(
@@ -87,14 +89,19 @@ def _get_validate_fn(entry):
     return fn
 
 
+ValidatorConfiguration = Union[Dict[str, Union[Callable, type, None]]]
+JSONBaseTypes = Union[str, int, bool, float, None]
+ConfigurationType = Dict[str, Union[Dict, List, Tuple, JSONBaseTypes]]
+
+
 @_config_pre_checklist
 def validate_config(
-    config,
-    required_keys,
-    optional_keys=None,
-    verbosity="error",
-    log_fn=None,
-    allow_unknown=True,
+    config: ConfigurationType,
+    required_keys: ValidatorConfiguration,
+    optional_keys: Optional[ValidatorConfiguration] = None,
+    verbosity: str = "error",
+    log_fn: Optional[Callable] = None,
+    allow_unknown: bool = True,
 ):
     """Validate configuration."""
 
@@ -121,7 +128,9 @@ def validate_config(
                 raise UnknownKeyError(f"unknown key: {key}")
             continue
 
-        key_loc = required_keys if key in required_keys else optional_keys
+        # FIXME redundant, but mypy complains
+        if optional_keys is not None:
+            key_loc = required_keys if key in required_keys else optional_keys
         # call validate
         if key_loc[key] is None:
             # no validation
@@ -140,6 +149,7 @@ def validate_config(
 
     # resolve dependencies
     for key, depends in deferred_keys.items():
+        # FIXME mypy complains
         key_loc = required_keys if key in required_keys else optional_keys
         try:
             transform = _get_validate_fn(key_loc[key])(
