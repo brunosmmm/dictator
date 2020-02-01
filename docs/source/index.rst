@@ -7,8 +7,8 @@ Welcome to dictator's documentation!
    :caption: Contents:
 
    quickstart
-   advanced_topics
    patterns
+   advanced_topics
 
 Indices and tables
 ==================
