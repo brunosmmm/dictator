@@ -128,7 +128,7 @@ def validate_config(
                 raise UnknownKeyError(f"unknown key: {key}")
             continue
 
-        # FIXME redundant, but mypy complains
+        # FIXME: redundant, but mypy complains
         if optional_keys is not None:
             key_loc = required_keys if key in required_keys else optional_keys
         # call validate
@@ -149,7 +149,7 @@ def validate_config(
 
     # resolve dependencies
     for key, depends in deferred_keys.items():
-        # FIXME mypy complains
+        # FIXME: mypy complains
         key_loc = required_keys if key in required_keys else optional_keys
         try:
             transform = _get_validate_fn(key_loc[key])(

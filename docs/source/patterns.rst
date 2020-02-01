@@ -56,3 +56,14 @@ negated, not the most recent:
 
 Validation union
 ----------------
+
+Union of two or more validators can be achieved by usage of the ValidatorUnion validator:
+
+::
+
+   @ValidatorUnion(validate_integer, validate_string)
+   def my_validator(value, **kwargs):
+     """Works with either integers or strings."""
+     return value
+
+ Note that if the first validator flags the value as validated, the next validations are not executed.
