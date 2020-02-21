@@ -109,7 +109,7 @@ class HomogeneousValidator(Validator):
         kwargs
             Any other metadata
         """
-        if not callable(validator) or not isinstance(validator, type):
+        if not callable(validator) and not isinstance(validator, type):
             raise TypeError(
                 "validator must either be a callable or a python type"
             )
