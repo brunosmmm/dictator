@@ -1,6 +1,6 @@
 """Validate test configuration."""
 
-from typing import Type, Union, Callable, Dict, List, Tuple, Optional
+from typing import Type, Union, Callable, Dict, List, Tuple, Optional, Any
 
 from dictator.errors import (
     MissingRequiredKeyError,
@@ -102,6 +102,7 @@ def validate_config(
     verbosity: str = "error",
     log_fn: Optional[Callable] = None,
     allow_unknown: bool = True,
+    **extra_kwargs: Dict[str, Any],
 ):
     """Validate configuration."""
 
@@ -113,7 +114,7 @@ def validate_config(
     else:
         _log = _default_logger
 
-    transformed_config = {}
+    transformed_config = extra_kwargs.copy()
     deferred_keys = {}
     for key, value in config.items():
         if not isinstance(key, str):
