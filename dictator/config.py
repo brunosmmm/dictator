@@ -129,8 +129,7 @@ def validate_config(
             continue
 
         # FIXME: redundant, but mypy complains
-        if optional_keys is not None:
-            key_loc = required_keys if key in required_keys else optional_keys
+        key_loc = required_keys if key in required_keys else optional_keys
         # call validate
         if key_loc[key] is None:
             # no validation
