@@ -98,6 +98,13 @@ validate_boolean = ValidatorFactory(ValidateType(bool))
 validate_float = ValidatorFactory(ValidateType(float))
 validate_integer = ValidatorFactory(_validate_integer)
 
+validate_string_pre = ValidatorFactory(ValidateType(str), after_fn=False)
+validate_list_pre = ValidatorFactory(ValidateType(tuple, list), after_fn=False)
+validate_dict_pre = ValidatorFactory(ValidateType(dict), after_fn=False)
+validate_boolean_pre = ValidatorFactory(ValidateType(bool), after_fn=False)
+validate_float_pre = ValidatorFactory(ValidateType(float), after_fn=False)
+validate_integer_pre = ValidatorFactory(_validate_integer, after_fn=False)
+
 
 def validate_null(_value: Any, **kwargs: Any) -> None:
     """Validate null value.
