@@ -12,7 +12,7 @@ def test_fragment_replace():
     }
     TEST_REQ = {
         "my_key": str,
-        "my_other_key": FragmentReplace("REPLACETHIS", "my_key"),
+        "my_other_key": FragmentReplace({"REPLACETHIS": "my_key"}),
     }
 
     return validate_config(TEST_CONFIG, TEST_REQ)
