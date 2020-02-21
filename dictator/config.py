@@ -102,6 +102,7 @@ def validate_config(
     verbosity: str = "error",
     log_fn: Optional[Callable] = None,
     allow_unknown: bool = True,
+    parent_keys: Optional[Dict[str, Any]] = None,
     **extra_kwargs: Dict[str, Any],
 ):
     """Validate configuration."""
@@ -139,7 +140,10 @@ def validate_config(
             # try default validator
             try:
                 new_value = _get_validate_fn(key_loc[key])(
-                    value, _validator_args=vargs, **transformed_config
+                    value,
+                    _validator_args=vargs,
+                    _parent=parent_keys,
+                    **transformed_config,
                 )
                 transformed_config[key] = (
                     value if new_value is None else new_value
@@ -153,7 +157,10 @@ def validate_config(
         key_loc = required_keys if key in required_keys else optional_keys
         try:
             transform = _get_validate_fn(key_loc[key])(
-                config[key], _validator_args=vargs, **transformed_config
+                config[key],
+                _validator_args=vargs,
+                _parent=parent_keys,
+                **transformed_config,
             )
         except DeferValidation as ex:
             # deferred validation still not done, failure
