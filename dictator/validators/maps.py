@@ -40,5 +40,5 @@ class SubDictValidator(Validator):
     def validate(self, _value, **kwargs):
         """Perform sub-validation."""
         return dictator.config.validate_config(
-            _value, self._required, self._optional
+            _value, self._required, self._optional, _parent=kwargs
         )

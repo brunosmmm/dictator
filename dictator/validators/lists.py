@@ -79,7 +79,7 @@ class SubListValidator(Validator):
         """Perform sub-validation."""
         return [
             dictator.config.validate_config(
-                entry, self._required, self._optional
+                entry, self._required, self._optional, _parent=kwargs,
             )
             for entry in _value
         ]
