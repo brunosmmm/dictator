@@ -9,6 +9,22 @@ class Validator:
 
     _DEFAULT_NAME: Union[None, str] = None
 
+    def __init__(self, after_fn: bool = True, **kwargs):
+        """Initialize.
+
+        Parameters
+        ----------
+        after_fn
+          Execute validator after decorated function
+        """
+        super().__init__(**kwargs)
+        self._after = after_fn
+
+    @property
+    def after(self):
+        """Get if executed after decorated function."""
+        return self._after
+
     @classmethod
     def get_default_name(cls) -> str:
         """Get default name."""
@@ -34,7 +50,11 @@ class Validator:
 
         @wraps(fn)
         def _validate(*args, **kwargs):
-            _value = fn(*args, **kwargs)
-            return self.validate(_value, **kwargs)
+            if not self._after:
+                _value = self.validate(*args, **kwargs)
+                return fn(_value, **kwargs)
+            else:
+                _value = fn(*args, **kwargs)
+                return self.validate(_value, **kwargs)
 
         return _validate

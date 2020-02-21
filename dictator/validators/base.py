@@ -41,7 +41,7 @@ class ValidateType(Validator):
 class ValidatorFactory(Validator):
     """Validator factory."""
 
-    def __init__(self, validate_fn: Union[Callable, Validator]):
+    def __init__(self, validate_fn: Union[Callable, Validator], **kwargs):
         """Initialize.
 
         Parameters
@@ -49,6 +49,7 @@ class ValidatorFactory(Validator):
         validate_fn
             Some callable that performs actual validation
         """
+        super().__init__(**kwargs)
         if not callable(validate_fn):
             raise TypeError("validate_fn must be callable")
         if isinstance(validate_fn, Validator):
