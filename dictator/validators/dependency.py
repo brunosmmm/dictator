@@ -77,7 +77,7 @@ class KeyDependency(Validator):
 
         Parameters
         ----------
-        dependencies:
+        dependencies
             Key names which are dependencies
         kwargs
             Any other metadata
