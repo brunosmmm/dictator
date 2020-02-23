@@ -62,8 +62,11 @@ def test_fragment_replace_fail():
     with pytest.raises(FragmentError):
         validate_config(TEST_CONFIG, TEST_REQ)
 
+    return validate_config(TEST_CONFIG, TEST_REQ, my_key2="bla")
+
 
 if __name__ == "__main__":
     print(test_fragment_replace())
     print(test_auto_fragment_replace())
     print(test_parent_fragment_replace())
+    print(test_fragment_replace_fail())
