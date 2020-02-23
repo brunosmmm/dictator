@@ -56,18 +56,31 @@ class FragmentReplace(Validator):
 class AutoFragmentReplace(Validator):
     """Automatic fragment replacer."""
 
-    REPLACE_PATTERN = re.compile(r"\$\{(\.\.)?(\w+)\}")
+    REPLACE_PATTERN = re.compile(r"\$\{((?:\.\.)|:)?(\w+)\}")
+    KEY_REF_TYPES = ("parent", "top", "normal")
+
+    @staticmethod
+    def get_key_type(leading_str):
+        """Get key type."""
+        if leading_str == ":":
+            return "top"
+        if leading_str == "..":
+            return "parent"
+        if leading_str == "":
+            return "normal"
+
+        raise ValueError("invalid leading characters")
 
     @validate_string
     def validate(self, _value, **kwargs):
         """Perform validation."""
         req_keys = re.findall(self.REPLACE_PATTERN, _value)
-        req_keys = [(key, rel == "..") for rel, key in req_keys]
+        req_keys = [(key, self.get_key_type(rel)) for rel, key in req_keys]
 
         true_depends = []
         soft_depends = {}
-        for req_key, is_rel in req_keys:
-            if is_rel:
+        for req_key, ktype in req_keys:
+            if ktype == "parent":
                 if "_parent" not in kwargs or kwargs["_parent"] is None:
                     raise ValidationError(
                         "key requires a parent configuration which is not available"
@@ -79,17 +92,28 @@ class AutoFragmentReplace(Validator):
                         f"couldn't find key {req_key} in parent configuration"
                     )
                 soft_depends[req_key] = parent[req_key]
-            else:
+            elif ktype == "normal":
                 true_depends.append(req_key)
+            else:
+                parent = kwargs["_parent"]
+                top = None
+                while parent is not None:
+                    top = parent
+                    parent = parent["_parent"]
+                if req_key not in top:
+                    raise ValidationError(
+                        f"couldn't find key {req_key} in toplevel"
+                    )
+                soft_depends[req_key] = top[req_key]
 
         @KeyDependency(*true_depends)
         def _validate(_value, **kwargs):
-            for req_key, is_rel in req_keys:
-                value_src = soft_depends if is_rel else kwargs
+            for req_key, ktype in req_keys:
+                value_src = soft_depends if ktype != "normal" else kwargs
                 if req_key not in value_src:
                     raise FragmentError(f"key {req_key} is not available")
                 _value = re.sub(
-                    r"\$\{(\.\.)?" + req_key + r"\}",
+                    r"\$\{((?:\.\.)|:)?" + req_key + r"\}",
                     value_src[req_key],
                     _value,
                 )
