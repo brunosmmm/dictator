@@ -1,6 +1,11 @@
 """Test configuration fragment replacement."""
 
-from dictator.validators.replace import FragmentReplace, AutoFragmentReplace
+import pytest
+from dictator.validators.replace import (
+    FragmentReplace,
+    AutoFragmentReplace,
+    FragmentError,
+)
 from dictator.validators.lists import SubListValidator
 from dictator.config import validate_config
 
@@ -25,10 +30,7 @@ def test_auto_fragment_replace():
         "my_key": "my_value",
         "my_other_key": "${my_key}_dontreplace",
     }
-    TEST_REQ = {
-        "my_key": str,
-        "my_other_key": AutoFragmentReplace(),
-    }
+    TEST_REQ = {"my_key": str, "my_other_key": AutoFragmentReplace()}
 
     return validate_config(TEST_CONFIG, TEST_REQ)
 
@@ -47,6 +49,18 @@ def test_parent_fragment_replace():
     }
 
     return validate_config(TEST_CONFIG, TEST_REQ)
+
+
+def test_fragment_replace_fail():
+    """Test fragment replacement failure."""
+    TEST_CONFIG = {
+        "my_key": "my_value",
+        "my_other_key": "${my_key2}_dontreplace",
+    }
+    TEST_REQ = {"my_key": str, "my_other_key": AutoFragmentReplace()}
+
+    with pytest.raises(FragmentError):
+        validate_config(TEST_CONFIG, TEST_REQ)
 
 
 if __name__ == "__main__":

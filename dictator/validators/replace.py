@@ -8,6 +8,10 @@ from dictator.validators.dependency import KeyDependency
 from dictator.errors import ValidationError
 
 
+class FragmentError(ValidationError):
+    """Fragment replacement error."""
+
+
 class FragmentReplace(Validator):
     """Replace string fragments."""
 
@@ -82,6 +86,8 @@ class AutoFragmentReplace(Validator):
         def _validate(_value, **kwargs):
             for req_key, is_rel in req_keys:
                 value_src = soft_depends if is_rel else kwargs
+                if req_key not in value_src:
+                    raise FragmentError(f"key {req_key} is not available")
                 _value = re.sub(
                     r"\$\{(\.\.)?" + req_key + r"\}",
                     value_src[req_key],
