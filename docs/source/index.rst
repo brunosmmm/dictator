@@ -9,6 +9,7 @@ Welcome to dictator's documentation!
    quickstart
    patterns
    advanced_topics
+   utils
 
 Indices and tables
 ==================
