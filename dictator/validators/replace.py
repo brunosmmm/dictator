@@ -112,6 +112,8 @@ class AutoFragmentReplace(Validator):
                         raise ValidationError(
                             "key is not dictionary, cannot access member"
                         )
+                    if accessor not in key_src:
+                        raise FragmentError(f"member {accessor} not found")
                     key_src = key_src[accessor]
 
                 soft_depends[req_key] = key_src
