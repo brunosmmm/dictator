@@ -81,9 +81,27 @@ def test_fragment_replace_fail():
     return validate_config(TEST_CONFIG, TEST_REQ, my_key2="bla")
 
 
+def test_fragment_key():
+    """Test fragments which access keys."""
+    TEST_CONFIG = {
+        "my_key": {"foo": "bar"},
+        "my_other_key": "${my_key::foo}_dontreplace",
+    }
+
+    TEST_CONFIG_2 = {
+        "my_key": {"foo": "bar"},
+        "my_other_key": "${:my_key::foo}_dontreplace",
+    }
+    TEST_REQ = {"my_key": dict, "my_other_key": AutoFragmentReplace()}
+
+    validate_config(TEST_CONFIG, TEST_REQ)
+    return validate_config(TEST_CONFIG_2, TEST_REQ)
+
+
 if __name__ == "__main__":
     print(test_fragment_replace())
     print(test_auto_fragment_replace())
     print(test_parent_fragment_replace())
     print(test_fragment_replace_fail())
     print(test_toplevel_fragment_replace())
+    print(test_fragment_key())

@@ -56,7 +56,7 @@ class FragmentReplace(Validator):
 class AutoFragmentReplace(Validator):
     """Automatic fragment replacer."""
 
-    REPLACE_PATTERN = re.compile(r"\$\{((?:\.\.)|:)?(\w+)\}")
+    REPLACE_PATTERN = re.compile(r"\$\{((?:\.\.)|:)?([\w:]+)\}")
     KEY_REF_TYPES = ("parent", "top", "normal")
 
     @staticmethod
@@ -80,42 +80,66 @@ class AutoFragmentReplace(Validator):
         true_depends = []
         soft_depends = {}
         for req_key, ktype in req_keys:
+            key_accessor = req_key.split("::")
             if ktype == "parent":
                 if "_parent" not in kwargs or kwargs["_parent"] is None:
                     raise ValidationError(
                         "key requires a parent configuration which is not available"
                     )
-                parent = kwargs["_parent"]
-                if req_key not in parent:
-                    # TODO: be able to depend on parent configuration keys?
-                    raise ValidationError(
-                        f"couldn't find key {req_key} in parent configuration"
-                    )
-                soft_depends[req_key] = parent[req_key]
+                key_src = kwargs["_parent"]
             elif ktype == "normal":
-                true_depends.append(req_key)
+                true_depends.append(key_accessor[0])
+                continue
             else:
+                # top-level
                 parent = kwargs["_parent"]
-                top = None
-                while parent is not None:
-                    top = parent
-                    parent = parent["_parent"]
-                if req_key not in top:
-                    raise ValidationError(
-                        f"couldn't find key {req_key} in toplevel"
-                    )
-                soft_depends[req_key] = top[req_key]
+                if parent is None:
+                    # already at top-level
+                    key_src = kwargs
+                else:
+                    key_src = None
+                    while parent is not None:
+                        key_src = parent
+                        parent = parent["_parent"]
+
+            if key_accessor[0] not in key_src:
+                raise ValidationError(
+                    f"couldn't find key {req_key} in referred configuration level"
+                )
+            if len(key_accessor) > 1:
+                for accessor in key_accessor:
+                    if not isinstance(key_src, dict):
+                        raise ValidationError(
+                            "key is not dictionary, cannot access member"
+                        )
+                    key_src = key_src[accessor]
+
+                soft_depends[req_key] = key_src
+            else:
+                soft_depends[req_key] = key_src[req_key]
 
         @KeyDependency(*true_depends)
         def _validate(_value, **kwargs):
             for req_key, ktype in req_keys:
                 value_src = soft_depends if ktype != "normal" else kwargs
-                if req_key not in value_src:
+                key_accessor = req_key.split("::")
+                if len(key_accessor) > 1 and ktype == "normal":
+                    if key_accessor[0] not in value_src:
+                        raise FragmentError(
+                            f"key {key_accessor[0]} is not available"
+                        )
+                    if not isinstance(value_src[key_accessor[0]], dict):
+                        raise FragmentError(
+                            "sub-key requested from key which is not dictionary"
+                        )
+                    for accessor in key_accessor:
+                        value_src = value_src[accessor]
+                elif req_key not in value_src:
                     raise FragmentError(f"key {req_key} is not available")
+                else:
+                    value_src = value_src[req_key]
                 _value = re.sub(
-                    r"\$\{((?:\.\.)|:)?" + req_key + r"\}",
-                    value_src[req_key],
-                    _value,
+                    r"\$\{((?:\.\.)|:)?" + req_key + r"\}", value_src, _value
                 )
             return _value
 
