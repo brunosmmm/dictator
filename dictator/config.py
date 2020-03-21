@@ -102,6 +102,7 @@ def validate_config(
     verbosity: str = "error",
     log_fn: Optional[Callable] = None,
     allow_unknown: bool = True,
+    gobble_unknown: bool = True,
     parent_keys: Optional[Dict[str, Any]] = None,
     **extra_kwargs: Dict[str, Any],
 ):
@@ -128,7 +129,8 @@ def validate_config(
             _log(f"unknown key: '{key}'", "warning", verbosity)
             if allow_unknown is False:
                 raise UnknownKeyError(f"unknown key: {key}")
-            continue
+            if gobble_unknown:
+                continue
 
         # FIXME: redundant, but mypy complains
         key_loc = required_keys if key in required_keys else optional_keys
