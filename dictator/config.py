@@ -129,8 +129,10 @@ def validate_config(
             _log(f"unknown key: '{key}'", "warning", verbosity)
             if allow_unknown is False:
                 raise UnknownKeyError(f"unknown key: {key}")
-            if gobble_unknown:
-                continue
+            if not gobble_unknown:
+                # passes through without validation
+                transformed_config[key] = value
+            continue
 
         # FIXME: redundant, but mypy complains
         key_loc = required_keys if key in required_keys else optional_keys
