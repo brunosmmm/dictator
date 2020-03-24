@@ -44,8 +44,9 @@ def _config_pre_checklist(fn: Callable) -> Callable:
             raise TypeError(
                 f"configuration must be a dictionary, got: {type(config)}"
             )
-        if not isinstance(required_keys, dict):
-            raise TypeError("required_keys must be a dictionary")
+        if required_keys is not None:
+            if not isinstance(required_keys, dict):
+                raise TypeError("required_keys must be a dictionary")
 
         if optional_keys is not None:
             if not isinstance(optional_keys, dict):
