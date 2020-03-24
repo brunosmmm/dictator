@@ -88,13 +88,15 @@ class SubListValidator(Validator):
     @ValidateType(tuple, list)
     def validate(self, _value, **kwargs):
         """Perform sub-validation."""
+        validator_args = kwargs.pop("_validator_args", {})
+        validator_args.update(self._validator_options)
         return [
             dictator.config.validate_config(
                 entry,
                 self._required,
                 self._optional,
                 parent_keys=kwargs,
-                **self._validator_options,
+                **validator_args,
             )
             for entry in _value
         ]
