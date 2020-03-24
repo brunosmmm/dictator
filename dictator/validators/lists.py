@@ -1,6 +1,6 @@
 """List-based validators."""
 
-from typing import Any, Dict, Union, Type, Callable
+from typing import Union, Any, Dict, Optional, Type, Callable
 from dictator.validators import Validator
 from dictator.validators.base import ValidateType
 from dictator.errors import ValidationError
@@ -52,7 +52,8 @@ class SubListValidator(Validator):
     def __init__(
         self,
         required_keys: Dict[str, Any],
-        optional_keys: Union[None, Dict[str, Any]] = None,
+        optional_keys: Optional[Dict[str, Any]] = None,
+        validator_options: Optional[Dict[str, bool]] = None,
         **kwargs: Any,
     ):
         """Initialize.
@@ -63,6 +64,8 @@ class SubListValidator(Validator):
             Mapping of required keys and validators
         optional_keys
             Mapping of optional keys and validators
+        validator_options
+            Other options passed into main validator function
         kwargs
             Any other metadata
         """
@@ -71,6 +74,14 @@ class SubListValidator(Validator):
             raise TypeError("required_keys must be a dictionary")
         if optional_keys is not None and not isinstance(optional_keys, dict):
             raise TypeError("optional_keys must be a dictionary")
+        if validator_options is not None and not isinstance(
+            validator_options, dict
+        ):
+            raise TypeError("validator_options must be a dictionary")
+        elif validator_options is None:
+            self._validator_options = {}
+        else:
+            self._validator_options = validator_options
         self._required = required_keys
         self._optional = optional_keys
 
@@ -79,7 +90,11 @@ class SubListValidator(Validator):
         """Perform sub-validation."""
         return [
             dictator.config.validate_config(
-                entry, self._required, self._optional, parent_keys=kwargs,
+                entry,
+                self._required,
+                self._optional,
+                parent_keys=kwargs,
+                **self._validator_options,
             )
             for entry in _value
         ]
