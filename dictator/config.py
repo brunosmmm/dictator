@@ -120,11 +120,6 @@ def validate_config(
         allow_unknown = parent_keys.get("allow_unknown", allow_unknown)
         gobble_unknown = parent_keys.get("gobble_unknown", gobble_unknown)
 
-    if not required_keys and not optional_keys:
-        raise DefaultValidatorError(
-            "required and optional keys cannot be both empty"
-        )
-
     if required_keys is None:
         required_keys = {}
 
