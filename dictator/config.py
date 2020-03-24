@@ -103,6 +103,7 @@ def validate_config(
     log_fn: Optional[Callable] = None,
     allow_unknown: bool = True,
     gobble_unknown: bool = True,
+    inherit_options: bool = False,
     parent_keys: Optional[Dict[str, Any]] = None,
     **extra_kwargs: Dict[str, Any],
 ):
@@ -115,6 +116,10 @@ def validate_config(
         _log = log_fn
     else:
         _log = _default_logger
+
+    if inherit_options:
+        allow_unknown = parent_keys.get("allow_unknown", allow_unknown)
+        gobble_unknown = parent_keys.get("gobble_unknown", gobble_unknown)
 
     transformed_config = extra_kwargs.copy()
     deferred_keys = {}
