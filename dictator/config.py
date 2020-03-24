@@ -109,9 +109,6 @@ def validate_config(
 ):
     """Validate configuration."""
 
-    # pass validation config args down
-    vargs = {"verbosity": verbosity}
-
     if log_fn is not None:
         _log = log_fn
     else:
@@ -120,6 +117,13 @@ def validate_config(
     if inherit_options:
         allow_unknown = parent_keys.get("allow_unknown", allow_unknown)
         gobble_unknown = parent_keys.get("gobble_unknown", gobble_unknown)
+
+    # pass validation config args down
+    vargs = {
+        "verbosity": verbosity,
+        "allow_unknown": allow_unknown,
+        "gobble_unknown": gobble_unknown,
+    }
 
     transformed_config = extra_kwargs.copy()
     deferred_keys = {}
