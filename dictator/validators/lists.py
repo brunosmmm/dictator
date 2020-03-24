@@ -51,7 +51,7 @@ class SubListValidator(Validator):
 
     def __init__(
         self,
-        required_keys: Dict[str, Any],
+        required_keys: Optional[Dict[str, Any]] = None,
         optional_keys: Optional[Dict[str, Any]] = None,
         validator_options: Optional[Dict[str, bool]] = None,
         **kwargs: Any,
@@ -70,7 +70,7 @@ class SubListValidator(Validator):
             Any other metadata
         """
         super().__init__()
-        if not isinstance(required_keys, dict):
+        if required_keys is not None and not isinstance(required_keys, dict):
             raise TypeError("required_keys must be a dictionary")
         if optional_keys is not None and not isinstance(optional_keys, dict):
             raise TypeError("optional_keys must be a dictionary")

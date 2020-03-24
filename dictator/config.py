@@ -97,7 +97,7 @@ ConfigurationType = Dict[str, Union[Dict, List, Tuple, JSONBaseTypes]]
 @_config_pre_checklist
 def validate_config(
     config: ConfigurationType,
-    required_keys: ValidatorConfiguration,
+    required_keys: Optional[ValidatorConfiguration] = None,
     optional_keys: Optional[ValidatorConfiguration] = None,
     verbosity: str = "error",
     log_fn: Optional[Callable] = None,
@@ -117,6 +117,14 @@ def validate_config(
     if inherit_options:
         allow_unknown = parent_keys.get("allow_unknown", allow_unknown)
         gobble_unknown = parent_keys.get("gobble_unknown", gobble_unknown)
+
+    if not required_keys and not optional_keys:
+        raise DefaultValidatorError(
+            "required and optional keys cannot be both empty"
+        )
+
+    if required_keys is None:
+        required_keys = {}
 
     # pass validation config args down
     vargs = {
