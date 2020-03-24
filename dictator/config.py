@@ -44,9 +44,6 @@ def _config_pre_checklist(fn: Callable) -> Callable:
             raise TypeError(
                 f"configuration must be a dictionary, got: {type(config)}"
             )
-        if required_keys is not None:
-            if not isinstance(required_keys, dict):
-                raise TypeError("required_keys must be a dictionary")
 
         if optional_keys is not None:
             if not isinstance(optional_keys, dict):
@@ -59,13 +56,17 @@ def _config_pre_checklist(fn: Callable) -> Callable:
                     # warning, required AND optional
                     pass
 
-        for key in required_keys:
-            if not isinstance(key, str):
-                raise KeyDeclarationError("keys must be string values")
-            if key not in config:
-                raise MissingRequiredKeyError(
-                    f"invalid configuration, missing required key '{key}'"
-                )
+        if required_keys is not None:
+            if not isinstance(required_keys, dict):
+                raise TypeError("required_keys must be a dictionary")
+
+            for key in required_keys:
+                if not isinstance(key, str):
+                    raise KeyDeclarationError("keys must be string values")
+                if key not in config:
+                    raise MissingRequiredKeyError(
+                        f"invalid configuration, missing required key '{key}'"
+                    )
         return fn(config, required_keys, optional_keys, *args, **kwargs)
 
     return _check
