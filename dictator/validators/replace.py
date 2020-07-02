@@ -120,7 +120,7 @@ class AutoFragmentReplace(Validator):
             else:
                 soft_depends[req_key] = key_src[req_key]
 
-        @KeyDependency(*true_depends)
+        @KeyDependency(*true_depends, validate_after=True)
         def _validate(_value, **kwargs):
             for req_key, ktype in req_keys:
                 value_src = soft_depends if ktype != "normal" else kwargs

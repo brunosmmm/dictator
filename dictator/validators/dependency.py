@@ -29,7 +29,7 @@ class KeyDependencyMap(Validator):
 
     _DEFAULT_NAME = "dependency_map"
 
-    def __init__(self, **dependency_map: str):
+    def __init__(self, validate_after=False, **dependency_map: str):
         """Initialize.
 
         Parameters
@@ -37,7 +37,7 @@ class KeyDependencyMap(Validator):
         dependency_map
             Map of dependencies according to current key value
         """
-        super().__init__()
+        super().__init__(after_fn=validate_after)
         for name, dep in dependency_map.items():
             if not isinstance(dep, (str, tuple, str)):
                 raise TypeError("mapping value must be string, list or tuple")
@@ -72,7 +72,9 @@ class KeyDependency(Validator):
 
     _DEFAULT_NAME = "dependency"
 
-    def __init__(self, *dependencies: str, **kwargs: Any):
+    def __init__(
+        self, *dependencies: str, validate_after=False, **kwargs: Any
+    ):
         """Initialize.
 
         Parameters
@@ -82,7 +84,7 @@ class KeyDependency(Validator):
         kwargs
             Any other metadata
         """
-        super().__init__()
+        super().__init__(after_fn=validate_after)
         for dep in dependencies:
             if not isinstance(dep, str):
                 raise TypeError("dependencies must be strings")
