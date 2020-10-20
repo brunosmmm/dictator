@@ -72,10 +72,14 @@ class ValidateUnion(Validator):
         kwargs
           Any other metadata
         """
-        super().__init__()
+        super().__init__(**kwargs)
         for condition in conditions:
-            if not callable(condition) and not isinstance(condition, type):
-                raise TypeError("condition must be a callable or a type")
+            if (
+                not callable(condition)
+                and not isinstance(condition, type)
+                and condition is not None
+            ):
+                raise TypeError("condition must be a callable, type or None")
 
             self._conditions = conditions
 
@@ -83,13 +87,18 @@ class ValidateUnion(Validator):
         """Perform validation."""
         for condition in self._conditions:
             try:
-                ret = (
-                    DEFAULT_VALIDATOR_BY_TYPE[condition].validate(
+                if isinstance(condition, type):
+                    ret = DEFAULT_VALIDATOR_BY_TYPE[condition].validate(
                         _value, **kwargs
                     )
-                    if isinstance(condition, type)
-                    else condition(_value, **kwargs)
-                )
+                elif isinstance(condition, Validator):
+                    ret = condition.validate(_value, **kwargs)
+                elif condition is None:
+                    if _value is not None:
+                        continue
+                    ret = _value
+                else:
+                    ret = condition(_value, **kwargs)
                 return ret
             except ValidationError:
                 continue
