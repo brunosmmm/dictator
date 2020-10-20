@@ -10,6 +10,7 @@ from dictator.errors import (
     DefaultValidatorError,
 )
 from dictator.validators.dependency import DeferValidation
+from dictator.validators.util import ValidateUnion
 from dictator.validators import Validator
 from dictator.validators.base import DEFAULT_VALIDATOR_BY_TYPE
 
@@ -86,6 +87,8 @@ def _get_validate_fn(entry: Union[Type, Validator, Callable]) -> Callable:
             fn = default_validator
     elif isinstance(entry, Validator):
         fn = entry.validate
+    elif isinstance(entry, (list, tuple)):
+        fn = ValidateUnion(*entry).validate
     else:
         fn = entry
 
