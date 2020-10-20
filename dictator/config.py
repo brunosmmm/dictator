@@ -110,15 +110,13 @@ def validate_config(
     allow_unknown: bool = True,
     gobble_unknown: bool = True,
     inherit_options: bool = False,
+    pop_extra_kwargs: bool = False,
     parent_keys: Optional[Dict[str, Any]] = None,
     **extra_kwargs: Dict[str, Any],
 ):
     """Validate configuration."""
 
-    if log_fn is not None:
-        _log = log_fn
-    else:
-        _log = _default_logger
+    _log = log_fn if log_fn is not None else _default_logger
 
     if inherit_options:
         allow_unknown = parent_keys.get("allow_unknown", allow_unknown)
@@ -195,5 +193,11 @@ def validate_config(
         transformed_config[key] = (
             transform if transform is not None else config[key]
         )
+
+    # pop extra kwargs
+    if pop_extra_kwargs:
+        for kwarg in extra_kwargs:
+            if kwarg in transformed_config:
+                transformed_config.pop(kwarg)
 
     return transformed_config
