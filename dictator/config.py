@@ -118,12 +118,18 @@ def validate_config(
 
     _log = log_fn if log_fn is not None else _default_logger
 
-    if inherit_options:
-        allow_unknown = parent_keys.get("allow_unknown", allow_unknown)
-        gobble_unknown = parent_keys.get("gobble_unknown", gobble_unknown)
+    allow_unknown = (
+        parent_keys.get("allow_unknown", allow_unknown)
+        if inherit_options
+        else allow_unknown
+    )
+    gobble_unknown = (
+        parent_keys.get("gobble_unknown", gobble_unknown)
+        if inherit_options
+        else gobble_unknown
+    )
 
-    if required_keys is None:
-        required_keys = {}
+    required_keys = {} if required_keys is None else required_keys
 
     # pass validation config args down
     vargs = {
@@ -150,7 +156,6 @@ def validate_config(
                 transformed_config[key] = value
             continue
 
-        # FIXME: redundant, but mypy complains
         key_loc = required_keys if key in required_keys else optional_keys
         # call validate
         if key_loc[key] is None:
