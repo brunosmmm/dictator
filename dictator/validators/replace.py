@@ -71,9 +71,11 @@ class AutoFragmentReplace(Validator):
 
         raise ValueError("invalid leading characters")
 
-    @validate_string
     def validate(self, _value, **kwargs):
         """Perform validation."""
+        if not isinstance(_value, str):
+            # ignore if not string
+            return _value
         req_keys = re.findall(self.REPLACE_PATTERN, _value)
         req_keys = [(key, self.get_key_type(rel)) for rel, key in req_keys]
 
