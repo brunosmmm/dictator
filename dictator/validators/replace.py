@@ -142,9 +142,24 @@ class AutoFragmentReplace(Validator):
                     raise FragmentError(f"key {req_key} is not available")
                 else:
                     value_src = value_src[req_key]
+
                 _value = re.sub(
-                    r"\$\{((?:\.\.)|:)?" + req_key + r"\}", value_src, _value
+                    r"\$\{((?:\.\.)|:)?" + req_key + r"\}",
+                    str(value_src),
+                    _value,
                 )
+                # convert value back if numeric (and if possible)
+                if isinstance(value_src, int):
+                    try:
+                        return int(_value)
+                    except ValueError:
+                        pass
+                elif isinstance(value_src, float):
+                    try:
+                        return float(_value)
+                    except ValueError:
+                        pass
+
             return _value
 
         return _validate(_value, **kwargs)
