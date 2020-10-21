@@ -51,6 +51,10 @@ class Validator:
         @wraps(fn)
         def _validate(*args, **kwargs):
             if not self._after:
+                # FIXME: getting a double self argument???
+                if isinstance(args[0], Validator):
+                    _value = self.validate(*args[1:], **kwargs)
+                    return fn(args[0], _value, **kwargs)
                 _value = self.validate(*args, **kwargs)
                 return fn(_value, **kwargs)
             else:
