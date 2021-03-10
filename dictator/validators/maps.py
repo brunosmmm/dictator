@@ -7,7 +7,11 @@ from typing import Dict, Any, Optional
 
 
 class SubDictValidator(Validator):
-    """Automatically validate dict elements."""
+    """Automatically validate a dict of elements.
+
+    Validates a key: value mapping where each key has a different validator
+    associated with it.
+    """
 
     _DEFAULT_NAME = "sub_dict"
 

@@ -10,7 +10,10 @@ BIN_REGEX = re.compile(r"^(0b)?([0-1]+)$")
 
 
 class ValidateType(Validator):
-    """Type validator."""
+    """Type validator.
+
+    Validates if an object is from a certain Python type.
+    """
 
     _DEFAULT_NAME = "type"
 
@@ -39,7 +42,10 @@ class ValidateType(Validator):
 
 
 class ValidatorFactory(Validator):
-    """Validator factory."""
+    """Validator factory.
+
+    Create a validator class from a validation function.
+    """
 
     def __init__(self, validate_fn: Union[Callable, Validator], **kwargs):
         """Initialize.

@@ -17,7 +17,10 @@ from dictator.validators.base import (
 
 
 class ValidateChoice(Validator):
-    """Validate choice from list."""
+    """Validate choice from list.
+
+    Valid choices are declared in a list and value is validated against that.
+    """
 
     _DEFAULT_NAME = "choice"
 
@@ -45,7 +48,11 @@ class ValidateChoice(Validator):
 
 
 class SubListValidator(Validator):
-    """Automatically validate list elements."""
+    """Automatically validate list elements.
+
+    Perform element-wise validation for elements in a list. Each element must
+    be assigned a validator individually.
+    """
 
     _DEFAULT_NAME = "sub_list"
 
@@ -103,7 +110,11 @@ class SubListValidator(Validator):
 
 
 class HomogeneousValidator(Validator):
-    """Validate that list elements are homogeneously typed."""
+    """Validate that list elements are homogeneously typed.
+
+    All elements in a list are verified to be of the same type. If not,
+    validation fails.
+    """
 
     _DEFAULT_NAME = "list_type"
 

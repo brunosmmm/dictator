@@ -7,7 +7,10 @@ from typing import Any, Union
 
 
 class ValidateIntRange(Validator):
-    """Integer range validator."""
+    """Integer range validator.
+
+    Validate that an integer value is within a range.
+    """
 
     _DEFAULT_NAME = "int_range"
 

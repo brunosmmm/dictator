@@ -10,6 +10,7 @@ Welcome to dictator's documentation!
    patterns
    advanced_topics
    utils
+   api
 
 Indices and tables
 ==================

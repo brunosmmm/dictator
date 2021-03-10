@@ -66,4 +66,4 @@ Union of two or more validators can be achieved by usage of the ValidatorUnion v
      """Works with either integers or strings."""
      return value
 
- Note that if the first validator flags the value as validated, the next validations are not executed.
+Note that if the first validator flags the value as validated, the next validations are not executed.

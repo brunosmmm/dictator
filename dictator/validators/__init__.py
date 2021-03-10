@@ -5,7 +5,7 @@ from typing import Any, Union, Callable
 
 
 class Validator:
-    """Validator abstract class."""
+    """Base validator abstract class."""
 
     _DEFAULT_NAME: Union[None, str] = None
 

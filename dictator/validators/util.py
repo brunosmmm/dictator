@@ -1,6 +1,6 @@
 """Utilities."""
 
-from typing import Callable, Union, Type, Any
+from typing import Callable, Union, Type, Any, Optional
 
 from dictator.errors import ValidationError
 from dictator.validators import Validator
@@ -10,8 +10,15 @@ from dictator.validators.base import DEFAULT_VALIDATOR_BY_TYPE
 class InvertValidation(Validator):
     """Invert validation condition."""
 
-    def __init__(self, condition=None):
-        """Initialize."""
+    def __init__(self, condition: Optional[Union[Callable, Type]] = None):
+        """Initialize.
+
+        Parameters
+        ----------
+        condition
+          A condition to be inverted. If None, then the previous string of \
+        validations gets inverted.
+        """
         if (
             condition is not None
             and not isinstance(condition, type)
