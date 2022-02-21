@@ -8,6 +8,7 @@ from dictator.errors import (
     KeyDeclarationError,
     UnknownKeyError,
     DefaultValidatorError,
+    ValidationError,
 )
 from dictator.validators.dependency import DeferValidation
 from dictator.validators.util import ValidateUnion
@@ -175,6 +176,11 @@ def validate_config(
                 )
             except DeferValidation as defer:
                 deferred_keys[key] = defer.depends
+            except ValidationError as err:
+                _err = str(err)
+                raise ValidationError(
+                    f"while validating key {key}: " + _err
+                ) from err
 
     # resolve dependencies
     for key, depends in deferred_keys.items():
@@ -194,6 +200,11 @@ def validate_config(
                 f"unresolved dependencies found for key '{key}':"
                 f"'{readable_depends}'"
             )
+        except ValidationError as err:
+            _err = str(err)
+            raise ValidationError(
+                f"while validating key {key}: " + _err
+            ) from err
 
         transformed_config[key] = (
             transform if transform is not None else config[key]
