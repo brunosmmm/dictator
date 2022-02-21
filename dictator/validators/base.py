@@ -36,7 +36,9 @@ class ValidateType(Validator):
     def validate(self, _value, **kwargs):
         """Perform validation."""
         if not isinstance(_value, self.target_types):
-            raise ValidationError(f"value has unexpected type")
+            raise ValidationError(
+                f"value has unexpected type: {type(_value).__name__}"
+            )
 
         return _value
 
